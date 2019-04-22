@@ -7,6 +7,7 @@
 #include <assert.h>
 
 #include "hdict.h"
+#include "cycletimer.h"
 
 #define OMP 1
 
@@ -187,6 +188,7 @@ void test_par_delete(hdict_t dict, int* keys, int* values) {
 
 int main(int argc, char *argv[])
 {
+  double start_time, delta_time; 
   fprintf(stderr, "Starting simple correctness tests... \n");
   int keys[NUM_TEST_VALUES];
   int values[NUM_TEST_VALUES];
@@ -194,22 +196,26 @@ int main(int argc, char *argv[])
 
   // Sequential Correctness Tests 
   fprintf(stderr, "Starting simple sequential correctness test... \n");
+  start_time = currentSeconds();
   dict = setup(keys, values); 
   test_seq_setup(dict, keys);
   test_seq_insert(dict, keys, values);
   test_seq_delete(dict, keys, values);
   hdict_free(dict);
-  fprintf(stderr, "Complete!\n");
+  delta_time = currentSeconds() - start_time;
+  fprintf(stderr, "Complete! Took %f secs\n", delta_time);
 
   // TODO: Parallel Correctness Tests
 #if OMP 
   fprintf(stderr, "Starting simple parallel correctness test... \n");
+  start_time = currentSeconds();
   dict = setup(keys, values);
   test_par_setup(dict, keys);
   test_par_insert(dict, keys, values);
   test_par_delete(dict, keys, values);
   hdict_free(dict);
-  fprintf(stderr, "Complete!\n");
+  delta_time = currentSeconds() - start_time;
+  fprintf(stderr, "Complete! Took %f secs\n", delta_time);
 #endif
 
   fprintf(stderr, "Tests complete! Exiting...\n");
