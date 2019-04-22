@@ -27,6 +27,8 @@ void llist_insert(llist *L, int key, int val) {
 
 void llist_delete(llist *L, int key) {
   lnode *node = L->head;
+  if (node == NULL) return;
+
   if (node->key == key) {
     L->head = node->next;
     free(node);
