@@ -29,7 +29,7 @@ void hdict_insert(hdict *H, int key, int val) {
   pthread_mutex_lock(&(L->mutex));
   lnode_t node = llist_lookup(L, key);
   if (node == NULL) {
-    llist_insert(L, key, value);
+    llist_insert(L, key, val);
   } else {
     node->val = val;
   }
