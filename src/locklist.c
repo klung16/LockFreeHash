@@ -9,13 +9,13 @@ lnode *lnode_new(int key, int val) {
   node->key = key;
   node->val = val;
   node->next = NULL;
-  return n;
+  return node;
 }
 
 llist *llist_new() {
   llist *L = malloc(sizeof(llist));
   L->head = NULL;
-  L->mutex = PTHREAD_MUTEX_INITIALIZER;
+  pthread_mutex_init(&(L->mutex), NULL);
   return L;
 }
 
@@ -26,13 +26,13 @@ void llist_insert(llist *L, int key, int val) {
 }
 
 void llist_delete(llist *L, int key) {
-  llist *node = L->head
+  lnode *node = L->head;
   if (node->key == key) {
     L->head = node->next;
     free(node);
     return;
   }
-  llist *prev = L->head;
+  lnode *prev = L->head;
   for (node = L->head->next; node != NULL; node = node->next) {
     if (node->key == key) {
       prev->next = node->next;

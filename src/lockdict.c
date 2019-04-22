@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <pthread.h>
 #include "hdict.h"
 #include "locklist.h"
 

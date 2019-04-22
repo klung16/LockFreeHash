@@ -1,12 +1,14 @@
 #ifndef _LOCKLIST_H_
 #define _LOCKLIST_H_
 
+#include <pthread.h>
+
+typedef struct list_node *lnode_t;
 struct list_node {
   lnode_t next;
   int key;
   int val;
 };
-typedef struct list_node *lnode_t;
 
 struct list_header {
   lnode_t head;
