@@ -8,6 +8,8 @@
 
 #include "hdict.h"
 
+#define OMP 1
+
 #define NUM_BUCKETS 100
 #define NUM_TEST_VALUES 10000
 #define RAND_KEY_SEED 0
@@ -107,20 +109,109 @@ void test_seq_delete(hdict_t dict, int* keys, int* values) {
   }
 }
 
+void test_par_setup(hdict_t dict, int* keys) {
+  int i;
+  assert(dict != NULL);
+  
+  #pragma omp parallel for 
+  for (i = 0; i < NUM_TEST_VALUES; i++) {
+    hdict_delete(dict, keys[i]);
+  }
+  
+  #pragma omp parallel for
+  for (i = 0; i < NUM_TEST_VALUES; i++) {
+    assert(hdict_lookup(dict, keys[i]) == NULL);
+  }
+}
+
+void test_par_insert(hdict_t dict, int* keys, int* values) {
+  int actual, expected, i;
+  
+  #pragma omp parallel for
+  for (i = 0; i < NUM_TEST_VALUES; i++) {
+    hdict_insert(dict, keys[i], values[i]);
+  }
+  
+  #pragma omp parallel for
+  for (i = 0; i < NUM_TEST_VALUES; i++) {
+    actual = *hdict_lookup(dict, keys[i]);
+    assert(actual == values[i]);
+  }
+  
+  // Test that inserting overwrites existing values 
+  #pragma omp parallel for
+  for (i = 0; i < NUM_TEST_VALUES/2; i++) {
+    hdict_insert(dict, keys[i], values[NUM_TEST_VALUES - i - 1]);
+  }
+  
+  #pragma omp parallel for
+  for (i = 0; i < NUM_TEST_VALUES; i++) {
+    actual = *hdict_lookup(dict, keys[i]);
+    if (i < NUM_TEST_VALUES/2) {
+      expected = values[NUM_TEST_VALUES - i - 1];
+    } else {
+      expected = values[i];
+    }
+    
+    assert(actual == expected);
+  }
+}
+
+void test_par_delete(hdict_t dict, int* keys, int* values) {
+  int i, actual;
+  
+  #pragma omp parallel for
+  for (i = 0; i < NUM_TEST_VALUES/2; i++) {
+    hdict_delete(dict, keys[i]);
+  }
+  
+  #pragma omp parallel for
+  for (i = 0; i < NUM_TEST_VALUES; i++) {
+    if (i < NUM_TEST_VALUES/2) {
+      assert(hdict_lookup(dict, keys[i]) == NULL);
+    } else {
+      actual = *hdict_lookup(dict, keys[i]);
+      assert(actual == values[i]);
+    }
+  }
+  
+  #pragma omp parallel for
+  for (i = 0; i < NUM_TEST_VALUES; i++) {
+    hdict_delete(dict, keys[i]);
+  }
+  #pragma omp parallel for
+  for (i = 0; i < NUM_TEST_VALUES; i++) {
+    assert(hdict_lookup(dict, keys[i]) == NULL);
+  }
+}
+
 int main(int argc, char *argv[])
 {
-	 int keys[NUM_TEST_VALUES];
-   int values[NUM_TEST_VALUES];
-   hdict_t dict; 
-   
-   // Sequential Correctness Tests 
-   dict = setup(keys, values); 
-   test_seq_setup(dict, keys);
-   test_seq_insert(dict, keys, values);
-   test_seq_delete(dict, keys, values);
-   hdict_free(dict);
-   
-   // TODO: Parallel Correctness Tests
-   
-   return 1;
+  fprintf(stderr, "Starting simple correctness tests... \n");
+  int keys[NUM_TEST_VALUES];
+  int values[NUM_TEST_VALUES];
+  hdict_t dict; 
+
+  // Sequential Correctness Tests 
+  fprintf(stderr, "Starting simple sequential correctness test... \n");
+  dict = setup(keys, values); 
+  test_seq_setup(dict, keys);
+  test_seq_insert(dict, keys, values);
+  test_seq_delete(dict, keys, values);
+  hdict_free(dict);
+  fprintf(stderr, "Complete!\n");
+
+  // TODO: Parallel Correctness Tests
+#if OMP 
+  fprintf(stderr, "Starting simple parallel correctness test... \n");
+  dict = setup(keys, values);
+  test_par_setup(dict, keys);
+  test_par_insert(dict, keys, values);
+  test_par_delete(dict, keys, values);
+  hdict_free(dict);
+  fprintf(stderr, "Complete!\n");
+#endif
+
+  fprintf(stderr, "Tests complete! Exiting...\n");
+  return 1;
 }
