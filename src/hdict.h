@@ -3,11 +3,11 @@
 
 typedef struct hdict_header* hdict;
 
-// create new hash table
-hdict_t hdict_new(size_t capacity);
-
 // hash function
 int hash(hdict_t H, int key);
+
+// create new hash table
+hdict_t hdict_new(size_t capacity);
 
 // insert (key, val) pair into hash table
 void hdict_insert(hdict_t H, int key, int val);
