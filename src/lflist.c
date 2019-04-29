@@ -27,6 +27,7 @@ lnode *lnode_new(int key, int val) {
 
 void llist_insert(llist *L, int key, int val) {
   lnode *node = lnode_new(key, val);
+  llist oldval, newval;
   while (true) {
     // lnode *node = lnode_new(key, val);
     lnode *found = llist_lookup(L, key);
@@ -39,8 +40,6 @@ void llist_insert(llist *L, int key, int val) {
     node->list->mark = false;
     node->list->next = cur;
 
-    llist oldval;
-    llist newval;
     oldval.mark = false;
     oldval.next = cur;
     oldval.tag = ptag;
@@ -53,13 +52,42 @@ void llist_insert(llist *L, int key, int val) {
 }
 
 void llist_delete(llist *L, int key) {
+  llist oldval1, newval1;
+  llist oldval, newval;
+  while (true) {
+    if (llist_lookup(L, key) == NULL) return;
 
+    oldval1.mark = false;
+    oldval1.next = next;
+    oldval1.tag = ctag;
+    newval1.mark = true;
+    newval1.next = next;
+    newval1.tag = ctag+1;
+    if (!__sync_bool_compare_and_swap((long long*)(cur->list), *((long long*)&oldval1), *((long long*)&newval1))) {
+      continue;
+    }
+
+    oldval.mark = false;
+    oldval.next = cur;
+    oldval.tag = ptag;
+    newval.mark = false;
+    newval.next = next;
+    newval.tag = ptag+1;
+    if (__sync_bool_compare_and_swap((long long*)prev, *((long long*)&oldval), *((long long*)&newval))) {
+      //@TODO FREE LIST?
+      //free(cur);
+    } else {
+      llist_lookup(L, key);
+    }
+
+  }
 }
 
 lnode *llist_lookup(llist *L, int key) {
-  int ckey;
-
   if (L == NULL) return NULL;
+
+  int ckey;
+  llist oldval, newval;
 
   while (true) {
     prev = L;
@@ -92,8 +120,22 @@ lnode *llist_lookup(llist *L, int key) {
         }
         prev = cur->list;
       } else {
-        // @TODO D8
+        // printf("aloha\n");
+        // oldval.mark = false;
+        // oldval.next = cur;
+        // oldval.tag = ptag;
+        // newval.mark = false;
+        // newval.next = next;
+        // newval.tag = ptag+1;
+        // if (__sync_bool_compare_and_swap((long long*)prev, *((long long*)&oldval), *((long long*)&newval))) {
+        //   //@TODO FREE LIST?
+        //   // free(cur);
+        //   ctag = ptag+1;
+        // } else {
+        //   break;
+        // }
         return NULL;
+
       }
 
       pmark = cmark;
@@ -102,22 +144,6 @@ lnode *llist_lookup(llist *L, int key) {
     }
   }
 }
-
-// struct list_header;
-// typedef struct list_header *llist_t;
-//
-// struct list_node {
-//   llist_t list;
-//   int key;
-//   int val;
-// };
-// typedef struct list_node *lnode_t;
-//
-// struct list_header {
-//   lnode_t next;
-//   int tag;
-//   bool mark;
-// };
 
 void llist_free(llist *L) {
   llist *temp = L;
