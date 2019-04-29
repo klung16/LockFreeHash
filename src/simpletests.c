@@ -182,7 +182,7 @@ void test_par_delete(hdict_t dict, int* keys, int* values) {
   for (i = 0; i < NUM_TEST_VALUES/2; i++) {
     hdict_delete(dict, keys[i]);
   }
-  printf("helllo\n");
+
   #pragma omp parallel for
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     if (i < NUM_TEST_VALUES/2) {
@@ -192,18 +192,16 @@ void test_par_delete(hdict_t dict, int* keys, int* values) {
       // }
       assert(hdict_lookup(dict, keys[i]) == NULL);
     } else {
+      // printf("%d %d %d\n", keys[i], values[i], actual);
       actual = *hdict_lookup(dict, keys[i]);
       assert(actual == values[i]);
     }
   }
-  printf("got here\n");
 
   #pragma omp parallel for
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     hdict_delete(dict, keys[i]);
   }
-
-  printf("now we here\n");
 
   #pragma omp parallel for
   for (i = 0; i < NUM_TEST_VALUES; i++) {
@@ -218,13 +216,12 @@ void simple_lf_test(int* keys, int* values) {
 #if OMP
   #pragma omp parallel for
   for (int i = 0; i < NUM_TEST_VALUES; i++) {
-    // printf("hello\n");
     llist_insert(list, keys[i], values[i]);
   }
 //
   #pragma omp barrier
 //
-  fprintf(stderr, "Complete Insert\n");
+  fprintf(stderr, "Complete Insertions\n");
 //
   #pragma omp parallel for
   for (int i = 0; i < NUM_TEST_VALUES; i++) {
@@ -261,10 +258,10 @@ int main(int argc, char *argv[])
 
   // Parallel Correctness Tests
 #if OMP
-  // fprintf(stdout, "Starting simple parallel lf-list correctness test... \n");
-  // setup(keys, values);
-  // simple_lf_test(keys, values);
-  // fprintf(stdout, "Complete! \n");
+  fprintf(stdout, "Starting simple parallel lf-list correctness test... \n");
+  setup(keys, values);
+  simple_lf_test(keys, values);
+  fprintf(stdout, "Complete! \n");
   fprintf(stdout, "Starting simple parallel correctness test... \n");
   dict = setup(keys, values);
   start_time = currentSeconds();
@@ -282,5 +279,7 @@ int main(int argc, char *argv[])
   fprintf(stdout, "Tests complete! Exiting...\n");
   free(keys);
   free(values);
+  
+  printf("%d %d %d %d %d\n", sizeof(bool), sizeof(long long), sizeof(llist_t), sizeof(struct list_node), sizeof(struct list_header));
   return 1;
 }

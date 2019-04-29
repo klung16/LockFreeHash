@@ -5,7 +5,7 @@ typedef struct list_node lnode;
 typedef struct list_header llist;
 
 llist *prev;
-bool pmark, cmark;
+int pmark, cmark;
 lnode *cur, *next;
 int ptag, ctag;
 
@@ -13,7 +13,7 @@ llist *llist_new() {
   llist *L = malloc(sizeof(llist));
   L->next = NULL;
   L->tag = 0;
-  L->mark = false;
+  L->mark = 0;
   return L;
 }
 
@@ -36,18 +36,20 @@ void llist_insert(llist *L, int key, int val) {
       if (!__sync_bool_compare_and_swap(&(found->val), oldvalue, val)) continue;
       return;
     } else {
-    }
-    node->list->mark = false;
-    node->list->next = cur;
+      
+      node->list->mark = 0;
+      node->list->next = cur;
 
-    oldval.mark = false;
-    oldval.next = cur;
-    oldval.tag = ptag;
-    newval.mark = false;
-    newval.next = node;
-    newval.tag = ptag+1;
-    if (__sync_bool_compare_and_swap((long long*)prev, *((long long*)&oldval), *((long long*)&newval))) return;
-    // free(node);
+      oldval.mark = 0;
+      oldval.next = cur;
+      oldval.tag = ptag;
+      newval.mark = 0;
+      newval.next = node;
+      newval.tag = ptag+1;
+      if (__sync_bool_compare_and_swap((long long*)prev, *((long long*)&oldval), *((long long*)&newval))) return;
+      // free(node);
+    }
+
   }
 }
 
@@ -57,25 +59,27 @@ void llist_delete(llist *L, int key) {
   while (true) {
     if (llist_lookup(L, key) == NULL) return;
 
-    oldval1.mark = false;
+    oldval1.mark = 0;
     oldval1.next = next;
     oldval1.tag = ctag;
-    newval1.mark = true;
+    newval1.mark = 1;
     newval1.next = next;
     newval1.tag = ctag+1;
     if (!__sync_bool_compare_and_swap((long long*)(cur->list), *((long long*)&oldval1), *((long long*)&newval1))) {
       continue;
     }
 
-    oldval.mark = false;
+    oldval.mark = 0;
     oldval.next = cur;
     oldval.tag = ptag;
-    newval.mark = false;
+    newval.mark = 0;
     newval.next = next;
     newval.tag = ptag+1;
     if (__sync_bool_compare_and_swap((long long*)prev, *((long long*)&oldval), *((long long*)&newval))) {
       //@TODO FREE LIST?
       //free(cur);
+      continue;
+      // printf("");
     } else {
       llist_lookup(L, key);
     }
@@ -104,11 +108,11 @@ lnode *llist_lookup(llist *L, int key) {
       ckey = cur->key;
 
       // llist oldval;
-      // oldval.mark = false;
+      // oldval.mark = 0;
       // oldval.next = cur;
       // oldval.tag = ptag;
 
-      if (prev->mark != false || prev->next != cur || prev->tag != ptag) break;
+      if (prev->mark != 0 || prev->next != cur || prev->tag != ptag) break;
       //@TODO: Fix ABA
       //if (!__sync_bool_compare_and_swap((long long*)prev, *((long long*)&oldval), *((long long*)&oldval))) break;
 
@@ -121,10 +125,10 @@ lnode *llist_lookup(llist *L, int key) {
         prev = cur->list;
       } else {
         // printf("aloha\n");
-        // oldval.mark = false;
+        // oldval.mark = 0;
         // oldval.next = cur;
         // oldval.tag = ptag;
-        // newval.mark = false;
+        // newval.mark = 0;
         // newval.next = next;
         // newval.tag = ptag+1;
         // if (__sync_bool_compare_and_swap((long long*)prev, *((long long*)&oldval), *((long long*)&newval))) {

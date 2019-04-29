@@ -16,7 +16,7 @@ typedef struct list_node *lnode_t;
 struct list_header {
   lnode_t next;
   int tag;
-  bool mark;
+  int mark;
 };
 
 // create new linked list node
