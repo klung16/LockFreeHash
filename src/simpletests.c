@@ -12,7 +12,7 @@
 #include "cycletimer.h"
 
 #define NUM_BUCKETS 100
-#define NUM_TEST_VALUES 10
+#define NUM_TEST_VALUES 100000
 #define RAND_KEY_SEED 0
 #define RAND_VAL_SEED 17
 
@@ -33,12 +33,12 @@ hdict_t setup(int* keys, int* values) {
   srand(RAND_KEY_SEED);
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     if (i <= NUM_TEST_VALUES/2) {
-      //val = rand();
-      val = i;
+      val = rand();
+      // val = i;
     // Negative keys
     } else {
-      //val = -rand();
-      val = i;
+      val = -rand();
+      // val = i;
     }
 
     while (contains(keys, val, i)) {
@@ -57,8 +57,8 @@ hdict_t setup(int* keys, int* values) {
       values[i] = -rand();
     }
   }
-  return NULL;
-  //return hdict_new(NUM_BUCKETS);
+  // return NULL;
+  return hdict_new(NUM_BUCKETS);
 }
 
 void test_seq_setup(hdict_t dict, int* keys) {
@@ -221,7 +221,7 @@ void simple_lf_test(int* keys, int* values) {
   #pragma omp parallel for
   for (int i = 0; i < NUM_TEST_VALUES; i++) {
     lnode_t actual = llist_lookup(list, keys[i]);
-    fprintf(stderr, "%d %d %d\n", actual->val, keys[i], values[i]);
+    // fprintf(stderr, "%d %d %d\n", actual->val, keys[i], values[i]);
     assert(actual->val == values[i]);
   }
 #endif
@@ -239,15 +239,15 @@ int main(int argc, char *argv[])
   hdict_t dict;
 
   // Sequential Correctness Tests
-  // fprintf(stdout, "Starting simple sequential correctness test... \n");
-  // start_time = currentSeconds();
-  // dict = setup(keys, values);
-  // test_seq_setup(dict, keys);
-  // test_seq_insert(dict, keys, values);
-  // //test_seq_delete(dict, keys, values);
-  // hdict_free(dict);
-  // delta_time = currentSeconds() - start_time;
-  // fprintf(stdout, "Complete! Took %f secs\n", delta_time);
+  fprintf(stdout, "Starting simple sequential correctness test... \n");
+  start_time = currentSeconds();
+  dict = setup(keys, values);
+  test_seq_setup(dict, keys);
+  test_seq_insert(dict, keys, values);
+  //test_seq_delete(dict, keys, values);
+  hdict_free(dict);
+  delta_time = currentSeconds() - start_time;
+  fprintf(stdout, "Complete! Took %f secs\n", delta_time);
 
   // Parallel Correctness Tests
 #if OMP
@@ -255,15 +255,15 @@ int main(int argc, char *argv[])
   setup(keys, values);
   simple_lf_test(keys, values);
   fprintf(stdout, "Complete! \n");
-  // fprintf(stdout, "Starting simple parallel correctness test... \n");
-  // start_time = currentSeconds();
-  // dict = setup(keys, values);
-  // test_par_setup(dict, keys);
-  // test_par_insert(dict, keys, values);
-  // //test_par_delete(dict, keys, values);
-  // hdict_free(dict);
-  // delta_time = currentSeconds() - start_time;
-  // fprintf(stdout, "Complete! Took %f secs\n", delta_time);
+  fprintf(stdout, "Starting simple parallel correctness test... \n");
+  start_time = currentSeconds();
+  dict = setup(keys, values);
+  test_par_setup(dict, keys);
+  test_par_insert(dict, keys, values);
+  //test_par_delete(dict, keys, values);
+  hdict_free(dict);
+  delta_time = currentSeconds() - start_time;
+  fprintf(stdout, "Complete! Took %f secs\n", delta_time);
 #endif
 
   fprintf(stdout, "Tests complete! Exiting...\n");

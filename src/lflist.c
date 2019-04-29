@@ -28,7 +28,6 @@ lnode *lnode_new(int key, int val) {
 void llist_insert(llist *L, int key, int val) {
   lnode *node = lnode_new(key, val);
   while (true) {
-    printf("%d whileeee\n", key);
     // lnode *node = lnode_new(key, val);
     lnode *found = llist_lookup(L, key);
     if (found != NULL) {
@@ -36,12 +35,9 @@ void llist_insert(llist *L, int key, int val) {
       if (!__sync_bool_compare_and_swap(&(found->val), oldvalue, val)) continue;
       return;
     } else {
-      printf("NULL\n");
     }
     node->list->mark = false;
     node->list->next = cur;
-
-    printf("ptag: %d\n", ptag);
 
     llist oldval;
     llist newval;
@@ -131,7 +127,7 @@ void llist_free(llist *L) {
     temp = node->list;
     free(node);
     node = temp->next;
-    printf("wtfff\n");
+    // printf("wtfff\n");
   }
   free(temp);
 }
