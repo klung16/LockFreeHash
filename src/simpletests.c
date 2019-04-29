@@ -5,29 +5,43 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <stdbool.h>
 
 #include "hdict.h"
 #include "cycletimer.h"
 
-#define OMP 1
-
 #define NUM_BUCKETS 100
-#define NUM_TEST_VALUES 10000
+#define NUM_TEST_VALUES 100000
 #define RAND_KEY_SEED 0
 #define RAND_VAL_SEED 17
 
+bool contains(int* keys, int val, int i) {
+  int j;
+  for (j = 0; j < i; j++) {
+    if (keys[j] == val) {
+      return true;
+    }
+  }
+  return false; 
+}
+
 hdict_t setup(int* keys, int* values) {
-  int i;
+  int i, val;
   
   // Set up the keys 
   srand(RAND_KEY_SEED);
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     if (i <= NUM_TEST_VALUES/2) {
-      keys[i] = rand();
+      val = rand();
     // Negative keys 
     } else {
-      keys[i] = -rand();
+      val = -rand();
     }
+    
+    while (contains(keys, val, i)) {
+      val = rand();
+    }
+    keys[i] = val;
   }
   
   // Set up the values 
@@ -189,13 +203,13 @@ void test_par_delete(hdict_t dict, int* keys, int* values) {
 int main(int argc, char *argv[])
 {
   double start_time, delta_time; 
-  fprintf(stderr, "Starting simple correctness tests... \n");
+  fprintf(stdout, "Starting simple correctness tests... \n");
   int keys[NUM_TEST_VALUES];
   int values[NUM_TEST_VALUES];
   hdict_t dict; 
 
   // Sequential Correctness Tests 
-  fprintf(stderr, "Starting simple sequential correctness test... \n");
+  fprintf(stdout, "Starting simple sequential correctness test... \n");
   start_time = currentSeconds();
   dict = setup(keys, values); 
   test_seq_setup(dict, keys);
@@ -203,11 +217,11 @@ int main(int argc, char *argv[])
   test_seq_delete(dict, keys, values);
   hdict_free(dict);
   delta_time = currentSeconds() - start_time;
-  fprintf(stderr, "Complete! Took %f secs\n", delta_time);
+  fprintf(stdout, "Complete! Took %f secs\n", delta_time);
 
-  // TODO: Parallel Correctness Tests
+  // Parallel Correctness Tests
 #if OMP 
-  fprintf(stderr, "Starting simple parallel correctness test... \n");
+  fprintf(stdout, "Starting simple parallel correctness test... \n");
   start_time = currentSeconds();
   dict = setup(keys, values);
   test_par_setup(dict, keys);
@@ -215,9 +229,9 @@ int main(int argc, char *argv[])
   test_par_delete(dict, keys, values);
   hdict_free(dict);
   delta_time = currentSeconds() - start_time;
-  fprintf(stderr, "Complete! Took %f secs\n", delta_time);
+  fprintf(stdout, "Complete! Took %f secs\n", delta_time);
 #endif
 
-  fprintf(stderr, "Tests complete! Exiting...\n");
+  fprintf(stdout, "Tests complete! Exiting...\n");
   return 1;
 }
