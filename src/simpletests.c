@@ -11,8 +11,8 @@
 #include "lflist.h"
 #include "cycletimer.h"
 
-#define NUM_BUCKETS 100
-#define NUM_TEST_VALUES 100000
+#define NUM_BUCKETS 1
+#define NUM_TEST_VALUES 50000
 #define RAND_KEY_SEED 0
 #define RAND_VAL_SEED 17
 
@@ -240,8 +240,8 @@ int main(int argc, char *argv[])
 
   // Sequential Correctness Tests
   fprintf(stdout, "Starting simple sequential correctness test... \n");
-  start_time = currentSeconds();
   dict = setup(keys, values);
+  start_time = currentSeconds();
   test_seq_setup(dict, keys);
   test_seq_insert(dict, keys, values);
   //test_seq_delete(dict, keys, values);
@@ -251,13 +251,13 @@ int main(int argc, char *argv[])
 
   // Parallel Correctness Tests
 #if OMP
-  fprintf(stdout, "Starting simple parallel lf-list correctness test... \n");
-  setup(keys, values);
-  simple_lf_test(keys, values);
-  fprintf(stdout, "Complete! \n");
+  // fprintf(stdout, "Starting simple parallel lf-list correctness test... \n");
+  // setup(keys, values);
+  // simple_lf_test(keys, values);
+  // fprintf(stdout, "Complete! \n");
   fprintf(stdout, "Starting simple parallel correctness test... \n");
-  start_time = currentSeconds();
   dict = setup(keys, values);
+  start_time = currentSeconds();
   test_par_setup(dict, keys);
   test_par_insert(dict, keys, values);
   //test_par_delete(dict, keys, values);
