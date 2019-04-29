@@ -53,12 +53,8 @@ lnode *llist_lookup(llist *L, int key) {
 }
 
 void llist_free(llist *L) {
-  lnode *node = L->head;
-  lnode *temp;
-  while (node != NULL) {
-    temp = node;
-    node = node->next;
-    free(temp);
+  for (lnode *node = L->head; node != NULL; node = node->next) {
+    free(node);
   }
   free(L);
 }
