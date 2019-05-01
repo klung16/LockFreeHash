@@ -12,7 +12,7 @@
 #include "cycletimer.h"
 
 #define NUM_BUCKETS 100
-#define NUM_TEST_VALUES 10000
+#define NUM_TEST_VALUES 100000
 #define RAND_KEY_SEED 0
 #define RAND_VAL_SEED 17
 
@@ -211,9 +211,9 @@ void test_par_delete(hdict_t dict, int* keys, int* values) {
 
 
 void simple_lf_test(int* keys, int* values) {
-  llist_t list = llist_new();
 
 #if OMP
+  llist_t list = llist_new();
   #pragma omp parallel for
   for (int i = 0; i < NUM_TEST_VALUES; i++) {
     llist_insert(list, keys[i], values[i]);
@@ -229,9 +229,9 @@ void simple_lf_test(int* keys, int* values) {
     // fprintf(stderr, "%d %d %d\n", actual->val, keys[i], values[i]);
     assert(actual->val == values[i]);
   }
+  llist_free(list);
 #endif
 
-  llist_free(list);
 
 }
 
@@ -276,10 +276,10 @@ int main(int argc, char *argv[])
   fprintf(stdout, "Complete! Took %f secs\n", delta_time);
 #endif
 
-  fprintf(stdout, "Tests complete! Exiting...\n");
+  // fprintf(stdout, "Tests complete! Exiting...\n");
   free(keys);
   free(values);
-  
-  printf("%d %d %d %d %d\n", sizeof(bool), sizeof(long long), sizeof(llist_t), sizeof(struct list_node), sizeof(struct list_header));
+
+  // printf("%d %d %d %d %d\n", sizeof(bool), sizeof(long long), sizeof(llist_t), sizeof(struct list_node), sizeof(struct list_header));
   return 1;
 }

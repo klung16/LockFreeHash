@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "lflist.h"
 
 typedef struct list_node lnode;
@@ -26,17 +27,16 @@ lnode *lnode_new(int key, int val) {
 }
 
 void llist_insert(llist *L, int key, int val) {
-  lnode *node = lnode_new(key, val);
+  // lnode *node = lnode_new(key, val);
   llist oldval, newval;
   while (true) {
-    // lnode *node = lnode_new(key, val);
     lnode *found = llist_lookup(L, key);
     if (found != NULL) {
       int oldvalue = found->val;
       if (!__sync_bool_compare_and_swap(&(found->val), oldvalue, val)) continue;
       return;
     } else {
-      
+      lnode *node = lnode_new(key, val);
       node->list->mark = 0;
       node->list->next = cur;
 
@@ -47,7 +47,8 @@ void llist_insert(llist *L, int key, int val) {
       newval.next = node;
       newval.tag = ptag+1;
       if (__sync_bool_compare_and_swap((long long*)prev, *((long long*)&oldval), *((long long*)&newval))) return;
-      // free(node);
+      free(node->list);
+      free(node);
     }
 
   }
@@ -78,8 +79,8 @@ void llist_delete(llist *L, int key) {
     if (__sync_bool_compare_and_swap((long long*)prev, *((long long*)&oldval), *((long long*)&newval))) {
       //@TODO FREE LIST?
       //free(cur);
-      continue;
-      // printf("");
+      // continue;
+      printf("\n");
     } else {
       llist_lookup(L, key);
     }
