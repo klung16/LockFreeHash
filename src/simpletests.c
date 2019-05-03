@@ -8,7 +8,6 @@
 #include <stdbool.h>
 
 #include "hdict.h"
-#include "lflist.h"
 #include "cycletimer.h"
 
 #define NUM_BUCKETS 100
@@ -202,58 +201,30 @@ void test_par_delete(hdict_t dict, int* keys, int* values) {
   }
 }
 
-
-void simple_lf_test(int* keys, int* values) {
-
-#if OMP
-  llist_t list = llist_new();
-  #pragma omp parallel for
-  for (int i = 0; i < NUM_TEST_VALUES; i++) {
-    llist_insert(list, keys[i], values[i]);
-  }
-
-  #pragma omp barrier
-
-  fprintf(stderr, "Complete Insertions\n");
-
-  #pragma omp parallel for
-  for (int i = 0; i < NUM_TEST_VALUES; i++) {
-    lnode_t actual = llist_lookup(list, keys[i]);
-    assert(actual->val == values[i]);
-  }
-  llist_free(list);
-#endif
-
-
-}
-
 int main(int argc, char *argv[])
 {
   double start_time, delta_time;
   fprintf(stdout, "Starting simple correctness tests... \n");
   int *keys = malloc(sizeof(int) * NUM_TEST_VALUES);
   int *values = malloc(sizeof(int) * NUM_TEST_VALUES);
-  hdict_t dict;
+  hdict_t dict = setup(keys, values);
 
   // Sequential Correctness Tests
   fprintf(stdout, "Starting simple sequential correctness test... \n");
-  dict = setup(keys, values);
   start_time = currentSeconds();
   test_seq_setup(dict, keys);
   test_seq_insert(dict, keys, values);
   // test_seq_delete(dict, keys, values);
-  hdict_free(dict);
   delta_time = currentSeconds() - start_time;
   fprintf(stdout, "Complete! Took %f secs\n", delta_time);
 
+  hdict_free(dict);
+
   // Parallel Correctness Tests
 #if OMP
-  fprintf(stdout, "Starting simple parallel lf-list correctness test... \n");
-  setup(keys, values);
-  simple_lf_test(keys, values);
-  fprintf(stdout, "Complete! \n");
-  fprintf(stdout, "Starting simple parallel correctness test... \n");
   dict = setup(keys, values);
+
+  fprintf(stdout, "Starting simple parallel correctness test... \n");
   start_time = currentSeconds();
   test_par_setup(dict, keys);
   printf("Setup complete\n");
@@ -261,12 +232,13 @@ int main(int argc, char *argv[])
   printf("Insert complete\n");
   test_par_delete(dict, keys, values);
   printf("Delete complete\n");
-  hdict_free(dict);
   delta_time = currentSeconds() - start_time;
   fprintf(stdout, "Complete! Took %f secs\n", delta_time);
+
+  hdict_free(dict);
 #endif
 
-  // fprintf(stdout, "Tests complete! Exiting...\n");
+  fprintf(stdout, "Tests complete! Exiting...\n");
   free(keys);
   free(values);
 
