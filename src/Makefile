@@ -5,13 +5,26 @@ CFLAGS-SEQ=-g -O3 -Wall -DDEBUG=$(DEBUG) -std=c99 -DOMP=0
 CFLAGS-OMP=-g -O3 -Wall -DDEBUG=$(DEBUG) -std=c99 -DOMP=1
 LDFLAGS= -lm
 
-CFILES = simpletests.c lockdict.c locklist.c cycletimer.c
-HFILES = hdict.h locklist.h cycletimer.h
+CFILES-LOCK = simpletests.c lockdict.c locklist.c cycletimer.c
+HFILES-LOCK = hdict.h locklist.h cycletimer.h
+CFILES-LF = simpletests.c lfdict.c lflist.c cycletimer.c
+HFILES-LF = hdict.h lflist.h cycletimer.h
+CFILES-LF-LIST = lflisttest.c lflist.c cycletimer.c
+HFILES-LF-LIST = lflist.h cycletimer.h
 
-all: seq-test openmp-test
+all: lock-seq-test lock-openmp-test lf-seq-test lf-openmp-test lf-list-test
 
-seq-test: $(CFILES) $(HFILES) 
-	$(CC) $(CFLAGS-SEQ) -o seq-test $(CFILES) $(LDFLAGS)
-	
-openmp-test: $(CFILES) $(HFILES) 
-	$(CC) $(CFLAGS-OMP) $(OMP) -o omp-test $(CFILES) $(LDFLAGS)
+lock-seq-test: $(CFILES-LOCK) $(HFILES-LOCK)
+	$(CC) $(CFLAGS-SEQ) -o lock-seq-test $(CFILES-LOCK) $(LDFLAGS)
+
+lock-openmp-test: $(CFILES-LOCK) $(HFILES-LOCK)
+	$(CC) $(CFLAGS-OMP) $(OMP) -o lock-omp-test $(CFILES-LOCK) $(LDFLAGS)
+
+lf-seq-test: $(CFILES-LF) $(HFILES-LF)
+	$(CC) $(CFLAGS-SEQ) -o lf-seq-test $(CFILES-LF) $(LDFLAGS)
+
+lf-openmp-test: $(CFILES-LF) $(HFILES-LF)
+	$(CC) $(CFLAGS-OMP) $(OMP) -o lf-omp-test $(CFILES-LF) $(LDFLAGS)
+
+lf-list-test: $(CFILES-LF-LIST) $(HFILES-LF-LIST)
+	$(CC) $(CFLAGS-OMP) $(OMP) -o lf-list-test $(CFILES-LF-LIST) $(LDFLAGS)
