@@ -1,200 +1,192 @@
-/*
- * Simple correctness testing
- */
-
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <stdbool.h>
+#include <getopt.h>
+#include <stdarg.h>
+#include <string.h>
+#include <ctype.h>
+#include <math.h>
 #include <omp.h>
 
 #include "hdict.h"
 #include "cycletimer.h"
+#include "util.h"
 
-#define NUM_BUCKETS 1000000
-#define NUM_TEST_VALUES 10000000
-#define RAND_KEY_SEED 0
-#define RAND_VAL_SEED 17
+#define FILE_NAME "Basic Lock-free Hash Table"
 
-bool contains(int* keys, int val, int i) {
-  int j;
-  for (j = 0; j < i; j++) {
-    if (keys[j] == val) {
-      return true;
-    }
-  }
-  return false;
+#define DEFAULT_LOAD_FACTOR 10
+#define DEFAULT_NUM_TEST_VALUES 1000000
+#define DEFAULT_DELETE_RATIO 0.1
+#define DEFAULT_INSERT_RATIO 0.1
+#define DEFAULT_NUM_THREADS 4
+
+#define DEFAULT_RAND_KEY_SEED 0
+#define DEFAULT_RAND_VAL_SEED 17
+#define RATIO 100
+
+static void usage() {
+  // threads, num data pts, ratio, load factor 
+  char *use_string = "[-n NUM_OPS] [-l LOAD_FACTOR] [-d DELETE_RATIO] [-i INSERT_RATIO] [-t THD]";
+  outmsg("Usage: %s %s\n", FILE_NAME, use_string);
+  outmsg("   -h               Print this message\n");
+  outmsg("   -n NUM_OPS       Number of operations (Default to %d)\n", DEFAULT_NUM_TEST_VALUES);
+  outmsg("   -l LOAD_FACTOR   Load factor (number of data points / number of buckets)\n");
+  outmsg("   -d DELETE_RATIO  Delete ratio for total number of operations [%]\n");
+  outmsg("   -i INSERT_RATIO  Insert ratio for total number of operations [%]\n");
+  outmsg("                        0% <= DELETE_RATIO + INSERT_RATIO <= 100%\n");
+  outmsg("   -t THD    Set number of threads\n");
+  done();
+  exit(0);
 }
 
-hdict_t setup(int* keys, int* values) {
-  int i, val;
+hdict_t setup(int* keys, int* values, int num_ops, int load_factor) {
+  int i, num_buckets;
 
-  // Set up the keys
-  srand(RAND_KEY_SEED);
-  for (i = 0; i < NUM_TEST_VALUES; i++) {
-    if (i <= NUM_TEST_VALUES/2) {
-      val = rand();
-    } else {
-      // Negative keys
-      val = -rand();
-    }
-
-    // while (contains(keys, val, i)) {
-    //   val = rand();
-    // }
-    keys[i] = val;
+  // Sets up the keys
+  srand(DEFAULT_RAND_KEY_SEED);
+  for (i = 0; i < num_ops; i++) {
+    keys[i] = rand();
   }
-
-  // Set up the values
-  srand(RAND_VAL_SEED);
-  for (i = 0; i < NUM_TEST_VALUES; i++) {
-    if (i <= (0.25)*NUM_TEST_VALUES || i > (0.75)*NUM_TEST_VALUES) {
-      values[i] = rand();
-    } else {
-      // Negative keys
-      values[i] = -rand();
-    }
+  
+  // Sets up the values
+  srand(DEFAULT_RAND_VAL_SEED);
+  for (i = 0; i < num_ops; i++) {
+    values[i] = rand();
   }
-  // return NULL;
-  return hdict_new(NUM_BUCKETS);
+  
+  num_buckets = round(num_ops / load_factor);
+  
+  outmsg("      The hash table is initilized with %d buckets.\n", num_buckets);
+  
+  return hdict_new(num_buckets);
 }
 
-void test_seq_setup(hdict_t dict, int* keys) {
+void test_insert(hdict_t dict, int* keys, int* values, int num_insert) {
   int i;
-  // assert(dict != NULL);
-
-  // for (i = 0; i < NUM_TEST_VALUES; i++) {
-  //   hdict_delete(dict, keys[i]);
-  // }
-
-  // for (i = 0; i < NUM_TEST_VALUES; i++) {
-  //   assert(hdict_lookup(dict, keys[i]) == NULL);
-  // }
-}
-
-void test_seq_insert(hdict_t dict, int* keys, int* values) {
-  int actual, expected, i;
-
-  for (i = 0; i < NUM_TEST_VALUES; i++) {
+  #pragma omp parallel for
+  for (i = 0; i < num_insert; i++) {
     hdict_insert(dict, keys[i], values[i]);
   }
+}
 
-  for (i = 0; i < NUM_TEST_VALUES; i++) {
-    actual = *hdict_lookup(dict, keys[i]);
-    // assert(actual == values[i]);
-  }
-
-  // Test that inserting overwrites existing values
-  for (i = 0; i < NUM_TEST_VALUES/2; i++) {
-    hdict_insert(dict, keys[i], values[NUM_TEST_VALUES - i - 1]);
-  }
-
-  for (i = 0; i < NUM_TEST_VALUES; i++) {
-    actual = *hdict_lookup(dict, keys[i]);
-    if (i < NUM_TEST_VALUES/2) {
-      expected = values[NUM_TEST_VALUES - i - 1];
-    } else {
-      expected = values[i];
-    }
-
-    // assert(actual == expected);
+void test_lookup(hdict_t dict, int* keys, int* values, int num_search) {
+  int i;
+  #pragma omp parallel for
+  for (i = 0; i < num_search; i++) {
+    hdict_lookup(dict, keys[i]);
   }
 }
 
-void test_seq_delete(hdict_t dict, int* keys, int* values) {
-  int i, actual;
-
-  for (i = 0; i < NUM_TEST_VALUES/2; i++) {
-    hdict_delete(dict, keys[i]);
-  }
-
-  for (i = 0; i < NUM_TEST_VALUES; i++) {
-    if (i < NUM_TEST_VALUES/2) {
-      // assert(hdict_lookup(dict, keys[i]) == NULL);
-    } else {
-      actual = *hdict_lookup(dict, keys[i]);
-      // assert(actual == values[i]);
-    }
-  }
-
-  for (i = 0; i < NUM_TEST_VALUES; i++) {
-    hdict_delete(dict, keys[i]);
-  }
-  for (i = 0; i < NUM_TEST_VALUES; i++) {
-    // assert(hdict_lookup(dict, keys[i]) == NULL);
-  }
-}
-
-
-void test_par_insert(hdict_t dict, int* keys, int* values) {
-  int actual, expected, i;
-
+void test_delete(hdict_t dict, int* keys, int* values, int num_delete) { 
+  int i;
   #pragma omp parallel for
-  for (i = 0; i < NUM_TEST_VALUES; i++) {
-    hdict_insert(dict, keys[i], values[i]);
-  }
-
-  #pragma omp parallel for
-  for (int j = 0; j < 8; j++) {
-    for (i = 0; i < NUM_TEST_VALUES; i++) {
-      actual = *hdict_lookup(dict, keys[i]);
-      // assert(actual == values[i]);
-    }
-  }
-
-}
-
-void test_par_delete(hdict_t dict, int* keys, int* values) {
-  int i, actual;
-
-
-  #pragma omp parallel for
-  for (i = 0; i < NUM_TEST_VALUES; i++) {
+  for (i = 0; i < num_delete; i++) {
     hdict_delete(dict, keys[i]);
   }
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
+  int c;
+  int num_ops = DEFAULT_NUM_TEST_VALUES;
+  int load_factor = DEFAULT_LOAD_FACTOR;
+  double delete_ratio = DEFAULT_DELETE_RATIO;
+  double insert_ratio = DEFAULT_INSERT_RATIO;
+  int num_threads = DEFAULT_NUM_THREADS;
+  double search_ratio, write_ratio;
   double start_time, delta_time;
-  fprintf(stdout, "Starting simple correctness tests... \n");
-  int *keys = malloc(sizeof(int) * NUM_TEST_VALUES);
-  int *values = malloc(sizeof(int) * NUM_TEST_VALUES);
   hdict_t dict;
-
-  // Sequential Correctness Tests
-  // fprintf(stdout, "Starting simple sequential correctness test... \n");
-  // start_time = currentSeconds();
-  // test_seq_setup(dict, keys);
-  // test_seq_insert(dict, keys, values);
-  // test_seq_delete(dict, keys, values);
-  // delta_time = currentSeconds() - start_time;
-  // fprintf(stdout, "Complete! Took %f secs\n", delta_time);
-
-
-
-  // Parallel Correctness Tests
-#if OMP
-  omp_set_num_threads(6);
-  dict = setup(keys, values);
-
-  fprintf(stdout, "Starting simple parallel correctness test... \n");
+  int num_insert, num_search, num_delete;
+  
+  outmsg("Running %s\n", FILE_NAME);
+  
+  /* Grabs Arguments */
+  char *optstring = "hn:l:d:i:t:";
+  while ((c = getopt(argc, argv, optstring)) != -1) {
+    switch(c) {
+      case 'h':
+        usage();
+  	    break;
+      case 'n':
+        num_ops = atoi(optarg);
+        break;
+      case 'l':
+        load_factor = atoi(optarg);
+        break;
+      case 'd':
+        sscanf(optarg, "%lf", &delete_ratio);
+        break;
+      case 'i':
+        sscanf(optarg, "%lf", &insert_ratio);
+        break;
+      case 't':
+        num_threads = atoi(optarg);
+        break;
+      default:
+        outmsg("Unknown option '%c'\n", c);
+  	    usage();
+  	    done();
+  	    exit(1);
+    }
+  }
+  
+  /* Checks Legality */
+  if (num_ops <= 0) {
+    outmsg("NUM_OPS must be positive.\n");
+    usage();
+    done();
+    exit(1);
+  }
+  if (load_factor <= 0) {
+    outmsg("LOAD_FACTOR must be positive.\n");
+    usage();
+    done();
+    exit(1);
+  }
+  write_ratio = delete_ratio + insert_ratio;
+  outmsg("%lf %lf %lf\n", insert_ratio, write_ratio, delete_ratio);
+  if (write_ratio < 0.0 || write_ratio > 1.0) {
+    outmsg("DELETE_RATIO + INSERT_RATIO = %lf not in range.\n", write_ratio);
+    usage();
+    done();
+    exit(1);
+  }
+  if (num_threads <= 0) {
+    outmsg("THD must be positive.\n");
+    usage();
+    done();
+    exit(1);
+  }
+  
+  search_ratio = (1 - write_ratio);
+  
+  outmsg("  Running the program with %d operations, load factor = %d, delete ratio = %.2f, insert ratio = %.2f, search ratio = %.2f\n", 
+            num_ops, load_factor, delete_ratio, insert_ratio, search_ratio);
+  outmsg("  Running with %d threads.  Max possible is %d.\n", num_threads, omp_get_max_threads());
+  omp_set_num_threads(num_threads);
+  
+  /* Set up */
+  outmsg("  The program is setting up the data...");
+  num_insert = round(num_ops * insert_ratio);
+  num_search = round(num_ops * search_ratio);
+  num_delete = round(num_ops * delete_ratio);
+  int *keys = malloc(sizeof(int) * num_ops);
+  int *values = malloc(sizeof(int) * num_ops);
+  dict = setup(keys, values, num_ops, load_factor);
+  outmsg("  Set up complete!");
+  
   start_time = currentSeconds();
-
-  // printf("Setup complete\n");
-  test_par_insert(dict, keys, values);
-  // printf("Insert complete\n");
-  test_par_delete(dict, keys, values);
-  // printf("Delete complete\n");
+  
+  test_insert(dict, keys, values, num_insert);
+  test_lookup(dict, keys, values, num_search);
+  test_delete(dict, keys, values, num_delete);
+  
   delta_time = currentSeconds() - start_time;
   fprintf(stdout, "Complete! Took %f secs\n", delta_time);
-
+  
   hdict_free(dict);
-#endif
-
-  fprintf(stdout, "Tests complete! Exiting...\n");
   free(keys);
   free(values);
-
-  return 1;
+  fprintf(stdout, "Tests complete! Exiting...\n");
+  
+  return 0;
 }

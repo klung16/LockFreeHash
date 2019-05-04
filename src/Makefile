@@ -15,8 +15,8 @@ CFILES-LFBACK = simpletests.c lfbackdict.c lfbacklist.c cycletimer.c
 HFILES-LFBACK = hdict.h lfbacklist.h cycletimer.h
 CFILES-LFBACK-LIST = lflisttest.c lfbacklist.c cycletimer.c
 HFILES-LFBACK-LIST = lfbacklist.h cycletimer.h
-CFILES-M = monitor.c lfdict.c lflist.c cycletimer.c
-HFILES-M = hdict.h lflist.h cycletimer.h
+CFILES-M = monitor.c lfdict.c lflist.c cycletimer.c util.c
+HFILES-M = hdict.h lflist.h cycletimer.h util.h
 CFILES-ML = lockmonitor.c lockdict.c locklist.c cycletimer.c
 HFILES-ML = hdict.h locklist.h cycletimer.h
 
