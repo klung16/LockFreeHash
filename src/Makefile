@@ -11,8 +11,8 @@ CFILES-LF = simpletests.c lfdict.c lflist.c cycletimer.c
 HFILES-LF = hdict.h lflist.h cycletimer.h
 CFILES-LF-LIST = lflisttest.c lflist.c cycletimer.c
 HFILES-LF-LIST = lflist.h cycletimer.h
-CFILES-M = monitor.c lfdict.c lflist.c cycletimer.c
-HFILES-M = hdict.h lflist.h cycletimer.h
+CFILES-M = monitor.c lfdict.c lflist.c cycletimer.c util.c
+HFILES-M = hdict.h lflist.h cycletimer.h util.h
 CFILES-ML = lockmonitor.c lockdict.c locklist.c cycletimer.c
 HFILES-ML = hdict.h locklist.h cycletimer.h
 
