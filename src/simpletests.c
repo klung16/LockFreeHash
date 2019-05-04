@@ -204,7 +204,7 @@ void test_par_delete(hdict_t dict, int* keys, int* values) {
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     hdict_delete(dict, keys[i]);
   }
-  
+
   #pragma omp parallel for
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     assert(hdict_lookup(dict, keys[i]) == NULL);
@@ -216,9 +216,9 @@ int main(int argc, char *argv[])
   int c;
   bool seq = false;
   double start_time, delta_time;
-  
+
   fprintf(stdout, "Starting simple correctness tests... \n");
-  
+
   /* Grabs Arguments */
   char *optstring = "hs";
   while ((c = getopt(argc, argv, optstring)) != -1) {
@@ -236,7 +236,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
   }
-  
+
   int *keys = malloc(sizeof(int) * NUM_TEST_VALUES);
   int *values = malloc(sizeof(int) * NUM_TEST_VALUES);
   hdict_t dict = setup(keys, values);
@@ -259,11 +259,13 @@ int main(int argc, char *argv[])
   dict = setup(keys, values);
   outmsg("    Starting simple parallel correctness test... \n");
   start_time = currentSeconds();
-  
+
   test_par_setup(dict, keys);
+  printf("suppp\n");
   test_par_insert(dict, keys, values);
+  printf("nooo\n");
   test_par_delete(dict, keys, values);
-  
+
   delta_time = currentSeconds() - start_time;
   outmsg("    Complete! Took %f secs\n", delta_time);
 

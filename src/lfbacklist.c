@@ -1,9 +1,117 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <limits.h>
 #include "lfbacklist.h"
+
+#define EPS 0.001
 
 typedef struct list_node lnode;
 typedef struct list_header llist;
+
+/***** Helper Function Declartions ****/
+
+bool is_marked(lnode *node);
+bool is_flagged(lnode *node);
+lnode *get_ptr(lnode *node);
+lnode *set_ptr(lnode *node, int mark, int flag);
+
+void help_marked(lnode *prev_node, lnode *del_node);
+void help_flagged(lnode *prev_node, lnode *del_node);
+void try_mark(lnode *del_node);
+bool try_flag(lnode *prev_node, lnode *target_node, lnode **res_node);
+void llist_search(float key, lnode *start_node, lnode **res1_node, lnode **res2_node);
+
+/***** Helper Function Implementations ****/
+
+bool is_marked(lnode *node) {
+  return (((unsigned long) node) & 1) == 1;
+}
+
+bool is_flagged(lnode *node) {
+  return (((unsigned long) node) & 2) == 1;
+}
+
+lnode *get_ptr(lnode *node) {
+  return (lnode *) ((((unsigned long) node) >> 2) << 2);
+}
+
+lnode *set_ptr(lnode *node, int mark, int flag) {
+  return (lnode *) ((unsigned long) node | flag << 1 | mark);
+}
+
+void help_marked(lnode *prev_node, lnode *del_node) {
+  lnode *next_node = get_ptr(del_node->next);
+  __sync_bool_compare_and_swap(&(prev_node->next), set_ptr(del_node, 0, 1), set_ptr(next_node, 0, 0));
+}
+
+void help_flagged(lnode *prev_node, lnode *del_node) {
+  del_node->prev = prev_node;
+  if (!is_marked(del_node)) try_mark(del_node);
+  help_marked(prev_node, del_node);
+}
+
+void try_mark(lnode *del_node) {
+  lnode *next_node, *result;
+  while (!is_marked(del_node)) {
+
+    next_node = get_ptr(del_node->next);
+    result = __sync_val_compare_and_swap(&(del_node->next), set_ptr(next_node, 0, 0), set_ptr(next_node, 1, 0));
+    if (!is_marked(result) && is_flagged(result)) help_flagged(del_node, get_ptr(result->next));
+
+  }
+}
+
+bool try_flag(lnode *prev_node, lnode *target_node, lnode **res_node) {
+  lnode *target_node_unflagged, *target_node_flagged, *result, *del_node;
+
+  while (true) {
+    target_node_unflagged = set_ptr(target_node, 0, 0);
+    target_node_flagged = set_ptr(target_node, 0, 1);
+
+    if (prev_node->next == target_node_flagged) {
+      *res_node = prev_node;
+      return false;
+    }
+    result = __sync_val_compare_and_swap(&(prev_node->next), target_node_unflagged, target_node_flagged);
+    if (result == target_node_unflagged) {
+      *res_node = prev_node;
+      return true;
+    } else if (result == target_node_flagged) {
+      *res_node = prev_node;
+      return false;
+    }
+
+    while (is_marked(prev_node)) { prev_node = prev_node->prev; }
+    llist_search(target_node->key - EPS, prev_node, &prev_node, &del_node);
+    if (del_node != target_node) {
+      *res_node = NULL;
+      return false;
+    }
+  }
+}
+
+void llist_search(float key, lnode *start_node, lnode **res1_node, lnode **res2_node) {
+  lnode *curr_node = start_node;
+  lnode *next_node = get_ptr(curr_node->next);
+
+  while (next_node->key <= key) {
+
+    while (is_marked(next_node) && (!is_marked(curr_node) || get_ptr(curr_node->next) != next_node)) {
+      if (get_ptr(curr_node->next) == next_node) help_marked(curr_node, next_node);
+      next_node = get_ptr(curr_node->next);
+    }
+
+    if (next_node->key <= key) {
+      curr_node = next_node;
+      next_node = get_ptr(curr_node->next);
+    }
+  }
+
+  *res1_node = curr_node;
+  *res2_node = next_node;
+}
+
+/***** Interface Function Implementations ****/
 
 lnode *lnode_new(int key, int val) {
   lnode *node = malloc(sizeof(lnode));
@@ -15,110 +123,10 @@ lnode *lnode_new(int key, int val) {
 
 llist *llist_new() {
   llist *L = malloc(sizeof(llist));
-  L->head = lnode_new(0, 0);
+  L->head = lnode_new(INT_MIN, 0);
+  L->tail = lnode_new(INT_MAX, 0);
+  L->head->next = L->tail;
   return L;
-}
-
-bool is_marked_reference(lnode *node) {
-  return (((unsigned long) node) & 1) == 1;
-}
-
-bool is_flagged_reference(lnode *node) {
-  return (((unsigned long) node) & 2) == 1;
-}
-
-lnode *get_unmarked_reference(lnode *node) {
-  return (lnode *) ((((unsigned long) node) >> 1) << 1);
-}
-
-lnode *get_marked_reference(lnode *node) {
-  return (lnode *) (((unsigned long) node) | 1);
-}
-
-lnode *pack_ptr(lnode *node, int mark, int flag) {
-  // @TODO IMPLEMENT
-  return node;
-}
-
-/***** Helper Function Declartions ****/
-
-void help_marked(lnode *prev_node, lnode *del_node);
-void help_flagged(lnode *prev_node, lnode *del_node);
-void try_mark(lnode *del_node);
-bool try_flag(lnode *prev_node, lnode *target_node, lnode **res_node);
-void llist_search(int key, lnode *start_node, lnode **res1_node, lnode **res2_node);
-
-/***** Helper Function Implementations ****/
-
-void help_marked(lnode *prev_node, lnode *del_node) {
-  lnode *next_node = del_node->next;
-  __sync_bool_compare_and_swap(&(prev_node->next), pack_ptr(del_node, 0, 1), pack_ptr(next_node, 0, 0));
-}
-
-void help_flagged(lnode *prev_node, lnode *del_node) {
-  del_node->prev = prev_node;
-  if (!is_marked_reference(del_node)) try_mark(del_node);
-  help_marked(prev_node, del_node);
-}
-
-void try_mark(lnode *del_node) {
-  lnode *next_node, *result;
-  do {
-
-    next_node = del_node->next;
-    result = __sync_val_compare_and_swap(&(del_node->next), pack_ptr(next_node, 0, 0), pack_ptr(next_node, 1, 0));
-    if (!is_marked_reference(result) && is_flagged_reference(result)) help_flagged(del_node, result->next);
-
-  } while (!is_marked_reference(del_node));
-}
-
-bool try_flag(lnode *prev_node, lnode *target_node, lnode **res_node) {
-  lnode *target_node_unflagged, *target_node_flagged, *result, *del_node;
-  while (true) {
-    if (prev_node->next == pack_ptr(target_node, 0, 1)) {
-      *res_node = prev_node;
-      return false;
-    }
-
-    target_node_unflagged = pack_ptr(target_node, 0, 0);
-    target_node_flagged = pack_ptr(target_node, 0, 1);
-    result = __sync_val_compare_and_swap(&(prev_node->next), target_node_unflagged, target_node_flagged);
-    if (result == target_node_unflagged) {
-      *res_node = prev_node;
-      return true;
-    } else if (result == target_node_flagged) {
-      *res_node = prev_node;
-      return false;
-    }
-
-    while (is_marked_reference(prev_node)) { prev_node = prev_node->prev; }
-    llist_search(target_node->key - 1, prev_node, &prev_node, &del_node);
-    if (del_node != target_node) {
-      *res_node = NULL;
-      return false;
-    }
-  }
-}
-
-void llist_search(int key, lnode *start_node, lnode **res1_node, lnode **res2_node) {
-  lnode *curr_node = start_node;
-  lnode *next_node = curr_node->next;
-
-  while (next_node->key <= key) {
-
-    while ((is_marked_reference(next_node) && !is_marked_reference(curr_node)) || curr_node->next != next_node) {
-      if (curr_node->next == next_node) help_marked(curr_node, next_node);
-      next_node = curr_node->next;
-    }
-
-    if (next_node->key <= key) {
-      curr_node = next_node;
-      next_node = curr_node->next;
-    }
-  }
-
-  *res1_node = curr_node;
-  *res2_node = next_node;
 }
 
 void llist_insert(llist *L, int key, int val) {
@@ -131,14 +139,14 @@ void llist_insert(llist *L, int key, int val) {
   lnode *prev_node_next, *result;
   while (true) {
     prev_node_next = prev_node->next;
-    if (is_flagged_reference(prev_node_next)) help_flagged(prev_node, prev_node_next->next);
+    if (is_flagged(prev_node_next)) help_flagged(prev_node, get_ptr(prev_node_next->next));
     else {
-      new_node->next = pack_ptr(next_node, 0, 0);
-      result = __sync_val_compare_and_swap(&(prev_node->next), pack_ptr(next_node, 0, 0), pack_ptr(new_node, 0, 0));
-      if (result == pack_ptr(next_node, 0, 0)) return;
+      new_node->next = set_ptr(next_node, 0, 0);
+      result = __sync_val_compare_and_swap(&(prev_node->next), set_ptr(next_node, 0, 0), set_ptr(new_node, 0, 0));
+      if (result == set_ptr(next_node, 0, 0)) return;
       else {
-        if (!is_marked_reference(result) && is_flagged_reference(result)) help_flagged(prev_node, result->next);
-        while (is_marked_reference(prev_node)) { prev_node = prev_node->prev; }
+        if (!is_marked(result) && is_flagged(result)) help_flagged(prev_node, get_ptr(result->next));
+        while (is_marked(prev_node)) { prev_node = prev_node->prev; }
       }
     }
 
@@ -152,10 +160,14 @@ void llist_insert(llist *L, int key, int val) {
 
 void llist_delete(llist *L, int key) {
   lnode *prev_node, *del_node;
-  llist_search(key - 1, L->head, &prev_node, &del_node);
+  printf("hello\n");
+  llist_search(key - EPS, L->head, &prev_node, &del_node);
+  printf("done\n");
   if (del_node->key != key) return;
   bool result = try_flag(prev_node, del_node, &prev_node);
+  printf("nooo\n");
   if (prev_node != NULL) help_flagged(prev_node, del_node);
+  printf("ohnoo\n");
   if (!result) return;
   return;
 }
@@ -173,7 +185,7 @@ void llist_free(llist *L) {
   lnode *temp;
   while (node != NULL) {
     temp = node;
-    node = node->next;
+    node = get_ptr(node->next);
     free(temp);
   }
   free(L);
