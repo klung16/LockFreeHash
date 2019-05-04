@@ -13,19 +13,13 @@ CFILES-LF-LIST = lflisttest.c lflist.c cycletimer.c
 HFILES-LF-LIST = lflist.h cycletimer.h
 CFILES-M = monitor.c lfdict.c lflist.c cycletimer.c util.c
 HFILES-M = hdict.h lflist.h cycletimer.h util.h
-CFILES-ML = lockmonitor.c lockdict.c locklist.c cycletimer.c
-HFILES-ML = hdict.h locklist.h cycletimer.h
+CFILES-ML = monitor.c lockdict.c locklist.c cycletimer.c util.c
+HFILES-ML = hdict.h locklist.h cycletimer.h util.h
 
-all: lock-seq-test lock-openmp-test lf-seq-test lf-openmp-test lf-list-test monitor lock-monitor
-
-lock-seq-test: $(CFILES-LOCK) $(HFILES-LOCK)
-	$(CC) $(CFLAGS-SEQ) -o lock-seq-test $(CFILES-LOCK) $(LDFLAGS)
+all: lock-openmp-test lf-openmp-test lf-list-test monitor lock-monitor
 
 lock-openmp-test: $(CFILES-LOCK) $(HFILES-LOCK)
 	$(CC) $(CFLAGS-OMP) $(OMP) -o lock-omp-test $(CFILES-LOCK) $(LDFLAGS)
-
-lf-seq-test: $(CFILES-LF) $(HFILES-LF)
-	$(CC) $(CFLAGS-SEQ) -o lf-seq-test $(CFILES-LF) $(LDFLAGS)
 
 lf-openmp-test: $(CFILES-LF) $(HFILES-LF)
 	$(CC) $(CFLAGS-OMP) $(OMP) -o lf-omp-test $(CFILES-LF) $(LDFLAGS)

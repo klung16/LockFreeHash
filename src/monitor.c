@@ -11,9 +11,6 @@
 #include "hdict.h"
 #include "cycletimer.h"
 #include "util.h"
-
-#define FILE_NAME "Basic Lock-free Hash Table"
-
 #define DEFAULT_LOAD_FACTOR 10
 #define DEFAULT_NUM_TEST_VALUES 1000000
 #define DEFAULT_DELETE_RATIO 0.1
@@ -25,9 +22,8 @@
 #define RATIO 100
 
 static void usage() {
-  // threads, num data pts, ratio, load factor 
   char *use_string = "[-n NUM_OPS] [-l LOAD_FACTOR] [-d DELETE_RATIO] [-i INSERT_RATIO] [-t THD]";
-  outmsg("Usage: %s %s\n", FILE_NAME, use_string);
+  outmsg("Usage: %s\n", use_string);
   outmsg("   -h               Print this message\n");
   outmsg("   -n NUM_OPS       Number of operations (Default to %d)\n", DEFAULT_NUM_TEST_VALUES);
   outmsg("   -l LOAD_FACTOR   Load factor (number of data points / number of buckets)\n");
@@ -97,8 +93,6 @@ int main(int argc, char *argv[]) {
   hdict_t dict;
   int num_insert, num_search, num_delete;
   
-  outmsg("Running %s\n", FILE_NAME);
-  
   /* Grabs Arguments */
   char *optstring = "hn:l:d:i:t:";
   while ((c = getopt(argc, argv, optstring)) != -1) {
@@ -143,7 +137,7 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
   write_ratio = delete_ratio + insert_ratio;
-  outmsg("%lf %lf %lf\n", insert_ratio, write_ratio, delete_ratio);
+  
   if (write_ratio < 0.0 || write_ratio > 1.0) {
     outmsg("DELETE_RATIO + INSERT_RATIO = %lf not in range.\n", write_ratio);
     usage();
