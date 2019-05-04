@@ -35,10 +35,11 @@ lnode *get_marked_reference(lnode *node) {
 
 lnode *llist_search(llist *L, int key, lnode **left_node) {
   lnode *left_node_next, *right_node;
+  lnode *t, *t_next;
 
   do {
-    lnode *t = L->head;
-    lnode *t_next = L->head->next;
+    t = L->head;
+    t_next = L->head->next;
 
     // find left and right node
     do {
