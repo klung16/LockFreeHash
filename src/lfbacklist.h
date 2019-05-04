@@ -1,8 +1,9 @@
-#ifndef _LFLIST_H_
-#define _LFLIST_H_
+#ifndef _LFBACKLIST_H_
+#define _LFBACKLIST_H_
 
 typedef struct list_node *lnode_t;
 struct list_node {
+  lnode_t prev;
   lnode_t next;
   int key;
   int val;
@@ -10,7 +11,6 @@ struct list_node {
 
 struct list_header {
   lnode_t head;
-  lnode_t tail;
 };
 typedef struct list_header *llist_t;
 

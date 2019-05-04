@@ -11,12 +11,19 @@ CFILES-LF = simpletests.c lfdict.c lflist.c cycletimer.c
 HFILES-LF = hdict.h lflist.h cycletimer.h
 CFILES-LF-LIST = lflisttest.c lflist.c cycletimer.c
 HFILES-LF-LIST = lflist.h cycletimer.h
+CFILES-LFBACK = simpletests.c lfbackdict.c lfbacklist.c cycletimer.c
+HFILES-LFBACK = hdict.h lfbacklist.h cycletimer.h
+CFILES-LFBACK-LIST = lflisttest.c lfbacklist.c cycletimer.c
+HFILES-LFBACK-LIST = lfbacklist.h cycletimer.h
 CFILES-M = monitor.c lfdict.c lflist.c cycletimer.c util.c
 HFILES-M = hdict.h lflist.h cycletimer.h util.h
 CFILES-ML = monitor.c lockdict.c locklist.c cycletimer.c util.c
 HFILES-ML = hdict.h locklist.h cycletimer.h util.h
 
-all: lock-openmp-test lf-openmp-test lf-list-test monitor lock-monitor
+all: lock-seq-test lock-openmp-test lf-seq-test lf-openmp-test lf-list-test lfback-seq-test lfback-openmp-test lfback-list-test monitor lock-monitor
+
+lock-seq-test: $(CFILES-LOCK) $(HFILES-LOCK)
+	$(CC) $(CFLAGS-SEQ) -o lock-seq-test $(CFILES-LOCK) $(LDFLAGS)
 
 lock-openmp-test: $(CFILES-LOCK) $(HFILES-LOCK)
 	$(CC) $(CFLAGS-OMP) $(OMP) -o lock-omp-test $(CFILES-LOCK) $(LDFLAGS)
@@ -26,6 +33,15 @@ lf-openmp-test: $(CFILES-LF) $(HFILES-LF)
 
 lf-list-test: $(CFILES-LF-LIST) $(HFILES-LF-LIST)
 	$(CC) $(CFLAGS-OMP) $(OMP) -o lf-list-test $(CFILES-LF-LIST) $(LDFLAGS)
+
+lfback-seq-test: $(CFILES-LFBACK) $(HFILES-LFBACK)
+	$(CC) $(CFLAGS-SEQ) -o lfback-seq-test $(CFILES-LFBACK) $(LDFLAGS)
+
+lfback-openmp-test: $(CFILES-LFBACK) $(HFILES-LFBACK)
+	$(CC) $(CFLAGS-OMP) $(OMP) -o lfback-omp-test $(CFILES-LFBACK) $(LDFLAGS)
+
+lfback-list-test: $(CFILES-LFBACK-LIST) $(HFILES-LFBACK-LIST)
+	$(CC) $(CFLAGS-OMP) $(OMP) -o lfback-list-test $(CFILES-LFBACK-LIST) $(LDFLAGS)
 
 monitor: $(CFILES-M) $(HFILES-M)
 	$(CC) $(CFLAGS-OMP) $(OMP) -o monitor $(CFILES-M) $(LDFLAGS)
