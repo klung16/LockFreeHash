@@ -1,20 +1,27 @@
-/*
- * Simple correctness testing
- */
-
 #include <stdio.h>
 #include <stdlib.h>
+#include <getopt.h>
 #include <assert.h>
 #include <stdbool.h>
 #include <omp.h>
 
 #include "hdict.h"
 #include "cycletimer.h"
+#include "util.h"
 
-#define NUM_BUCKETS 100
+#define NUM_BUCKETS 10000
 #define NUM_TEST_VALUES 100000
 #define RAND_KEY_SEED 0
 #define RAND_VAL_SEED 17
+
+static void usage() {
+  char *use_string = "[-s SEQ]";
+  outmsg("Usage: %s\n", use_string);
+  outmsg("   -h               Print this message\n");
+  outmsg("   -s               Turn on sequential test\n");
+  done();
+  exit(0);
+}
 
 bool contains(int* keys, int val, int i) {
   int j;
@@ -39,9 +46,9 @@ hdict_t setup(int* keys, int* values) {
       val = -rand();
     }
 
-    // while (contains(keys, val, i)) {
-    //   val = rand();
-    // }
+    while (contains(keys, val, i)) {
+      val = rand();
+    }
     keys[i] = val;
   }
 
@@ -61,15 +68,15 @@ hdict_t setup(int* keys, int* values) {
 
 void test_seq_setup(hdict_t dict, int* keys) {
   int i;
-  // assert(dict != NULL);
+  assert(dict != NULL);
 
-  // for (i = 0; i < NUM_TEST_VALUES; i++) {
-  //   hdict_delete(dict, keys[i]);
-  // }
+  for (i = 0; i < NUM_TEST_VALUES; i++) {
+    hdict_delete(dict, keys[i]);
+  }
 
-  // for (i = 0; i < NUM_TEST_VALUES; i++) {
-  //   assert(hdict_lookup(dict, keys[i]) == NULL);
-  // }
+  for (i = 0; i < NUM_TEST_VALUES; i++) {
+    assert(hdict_lookup(dict, keys[i]) == NULL);
+  }
 }
 
 void test_seq_insert(hdict_t dict, int* keys, int* values) {
@@ -81,7 +88,7 @@ void test_seq_insert(hdict_t dict, int* keys, int* values) {
 
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     actual = *hdict_lookup(dict, keys[i]);
-    // assert(actual == values[i]);
+    assert(actual == values[i]);
   }
 
   // Test that inserting overwrites existing values
@@ -97,7 +104,7 @@ void test_seq_insert(hdict_t dict, int* keys, int* values) {
       expected = values[i];
     }
 
-    // assert(actual == expected);
+    assert(actual == expected);
   }
 }
 
@@ -110,10 +117,10 @@ void test_seq_delete(hdict_t dict, int* keys, int* values) {
 
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     if (i < NUM_TEST_VALUES/2) {
-      // assert(hdict_lookup(dict, keys[i]) == NULL);
+      assert(hdict_lookup(dict, keys[i]) == NULL);
     } else {
       actual = *hdict_lookup(dict, keys[i]);
-      // assert(actual == values[i]);
+      assert(actual == values[i]);
     }
   }
 
@@ -121,23 +128,22 @@ void test_seq_delete(hdict_t dict, int* keys, int* values) {
     hdict_delete(dict, keys[i]);
   }
   for (i = 0; i < NUM_TEST_VALUES; i++) {
-    // assert(hdict_lookup(dict, keys[i]) == NULL);
+    assert(hdict_lookup(dict, keys[i]) == NULL);
   }
 }
 
 void test_par_setup(hdict_t dict, int* keys) {
   int i;
-  // assert(dict != NULL);
+  assert(dict != NULL);
 #if OMP
   #pragma omp parallel for
   for (i = 0; i < NUM_TEST_VALUES; i++) {
-    // if (i == 0) {printf("Num Threads: %d\n", omp_get_num_threads());}
     hdict_delete(dict, keys[i]);
   }
 
   #pragma omp parallel for
   for (i = 0; i < NUM_TEST_VALUES; i++) {
-    // assert(hdict_lookup(dict, keys[i]) == NULL);
+    assert(hdict_lookup(dict, keys[i]) == NULL);
   }
 #endif
 }
@@ -153,7 +159,7 @@ void test_par_insert(hdict_t dict, int* keys, int* values) {
   #pragma omp parallel for
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     actual = *hdict_lookup(dict, keys[i]);
-    // assert(actual == values[i]);
+    assert(actual == values[i]);
   }
 
   // Test that inserting overwrites existing values
@@ -171,7 +177,7 @@ void test_par_insert(hdict_t dict, int* keys, int* values) {
       expected = values[i];
     }
 
-    // assert(actual == expected);
+    assert(actual == expected);
   }
 
 }
@@ -187,10 +193,10 @@ void test_par_delete(hdict_t dict, int* keys, int* values) {
   #pragma omp parallel for
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     if (i < NUM_TEST_VALUES/2) {
-      // assert(hdict_lookup(dict, keys[i]) == NULL);
+      assert(hdict_lookup(dict, keys[i]) == NULL);
     } else {
       actual = *hdict_lookup(dict, keys[i]);
-      // assert(actual == values[i]);
+      assert(actual == values[i]);
     }
   }
 
@@ -198,53 +204,76 @@ void test_par_delete(hdict_t dict, int* keys, int* values) {
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     hdict_delete(dict, keys[i]);
   }
-  //
-  // #pragma omp parallel for
-  // for (i = 0; i < NUM_TEST_VALUES; i++) {
-  //   assert(hdict_lookup(dict, keys[i]) == NULL);
-  // }
+  
+  #pragma omp parallel for
+  for (i = 0; i < NUM_TEST_VALUES; i++) {
+    assert(hdict_lookup(dict, keys[i]) == NULL);
+  }
 }
 
 int main(int argc, char *argv[])
 {
+  int c;
+  bool seq = false;
   double start_time, delta_time;
+  
   fprintf(stdout, "Starting simple correctness tests... \n");
+  
+  /* Grabs Arguments */
+  char *optstring = "hs";
+  while ((c = getopt(argc, argv, optstring)) != -1) {
+    switch(c) {
+      case 'h':
+        usage();
+        break;
+      case 's':
+        seq = true;
+        break;
+      default:
+        outmsg("Unknown option '%c'\n", c);
+        usage();
+        done();
+        exit(1);
+    }
+  }
+  
   int *keys = malloc(sizeof(int) * NUM_TEST_VALUES);
   int *values = malloc(sizeof(int) * NUM_TEST_VALUES);
   hdict_t dict = setup(keys, values);
 
   // Sequential Correctness Tests
-  // fprintf(stdout, "Starting simple sequential correctness test... \n");
-  // start_time = currentSeconds();
-  // test_seq_setup(dict, keys);
-  // test_seq_insert(dict, keys, values);
-  // test_seq_delete(dict, keys, values);
-  // delta_time = currentSeconds() - start_time;
-  // fprintf(stdout, "Complete! Took %f secs\n", delta_time);
-
-  hdict_free(dict);
+  if (seq) {
+    outmsg("    Starting simple sequential correctness test... \n");
+    start_time = currentSeconds();
+    test_seq_setup(dict, keys);
+    test_seq_insert(dict, keys, values);
+    test_seq_delete(dict, keys, values);
+    delta_time = currentSeconds() - start_time;
+    outmsg("    Complete! Took %f secs\n", delta_time);
+    hdict_free(dict);
+  }
 
   // Parallel Correctness Tests
 #if OMP
+
   dict = setup(keys, values);
-
-  fprintf(stdout, "Starting simple parallel correctness test... \n");
+  outmsg("    Starting simple parallel correctness test... \n");
   start_time = currentSeconds();
+  
   test_par_setup(dict, keys);
-  // printf("Setup complete\n");
   test_par_insert(dict, keys, values);
-  // printf("Insert complete\n");
   test_par_delete(dict, keys, values);
-  // printf("Delete complete\n");
+  
   delta_time = currentSeconds() - start_time;
-  fprintf(stdout, "Complete! Took %f secs\n", delta_time);
+  outmsg("    Complete! Took %f secs\n", delta_time);
 
-  hdict_free(dict);
 #endif
 
-  fprintf(stdout, "Tests complete! Exiting...\n");
+  hdict_free(dict);
   free(keys);
   free(values);
+
+  outmsg("Tests complete! Exiting...\n");
 
   return 1;
 }

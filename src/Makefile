@@ -5,14 +5,14 @@ CFLAGS-SEQ=-g -O3 -Wall -DDEBUG=$(DEBUG) -std=c99 -DOMP=0
 CFLAGS-OMP=-g -O3 -Wall -DDEBUG=$(DEBUG) -std=c99 -DOMP=1
 LDFLAGS= -lm
 
-CFILES-LOCK = simpletests.c lockdict.c locklist.c cycletimer.c
-HFILES-LOCK = hdict.h locklist.h cycletimer.h
-CFILES-LF = simpletests.c lfdict.c lflist.c cycletimer.c
-HFILES-LF = hdict.h lflist.h cycletimer.h
+CFILES-LOCK = simpletests.c lockdict.c locklist.c cycletimer.c util.c
+HFILES-LOCK = hdict.h locklist.h cycletimer.h util.h
+CFILES-LF = simpletests.c lfdict.c lflist.c cycletimer.c util.c
+HFILES-LF = hdict.h lflist.h cycletimer.h util.h
 CFILES-LF-LIST = lflisttest.c lflist.c cycletimer.c
-HFILES-LF-LIST = lflist.h cycletimer.h
-CFILES-LFBACK = simpletests.c lfbackdict.c lfbacklist.c cycletimer.c
-HFILES-LFBACK = hdict.h lfbacklist.h cycletimer.h
+HFILES-LF-LIST = lflist.h cycletimer.h 
+CFILES-LFBACK = simpletests.c lfbackdict.c lfbacklist.c cycletimer.c util.c
+HFILES-LFBACK = hdict.h lfbacklist.h cycletimer.h util.h
 CFILES-LFBACK-LIST = lflisttest.c lfbacklist.c cycletimer.c
 HFILES-LFBACK-LIST = lfbacklist.h cycletimer.h
 CFILES-M = monitor.c lfdict.c lflist.c cycletimer.c util.c

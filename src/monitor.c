@@ -11,6 +11,7 @@
 #include "hdict.h"
 #include "cycletimer.h"
 #include "util.h"
+
 #define DEFAULT_LOAD_FACTOR 10
 #define DEFAULT_NUM_TEST_VALUES 1000000
 #define DEFAULT_DELETE_RATIO 0.1
