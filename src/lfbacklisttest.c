@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <omp.h>
 
-#include "lflist.h"
+#include "lfbacklist.h"
 #include "cycletimer.h"
 
 #define NUM_TEST_VALUES 100000
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
   int *values = malloc(sizeof(int) * NUM_TEST_VALUES);
   setup(keys, values);
 
-  fprintf(stdout, "Starting simple parallel lf-list correctness test... \n");
+  fprintf(stdout, "Starting simple parallel lfback-list correctness test... \n");
   start_time = currentSeconds();
   simple_lf_test(keys, values);
   delta_time = currentSeconds() - start_time;

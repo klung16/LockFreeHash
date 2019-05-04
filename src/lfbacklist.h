@@ -11,7 +11,6 @@ struct list_node {
 
 struct list_header {
   lnode_t head;
-  lnode_t tail;
 };
 typedef struct list_header *llist_t;
 

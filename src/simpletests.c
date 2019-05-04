@@ -9,8 +9,8 @@
 #include "cycletimer.h"
 #include "util.h"
 
-#define NUM_BUCKETS 10000
-#define NUM_TEST_VALUES 100000
+#define NUM_BUCKETS 1000
+#define NUM_TEST_VALUES 10000
 #define RAND_KEY_SEED 0
 #define RAND_VAL_SEED 17
 
@@ -255,15 +255,13 @@ int main(int argc, char *argv[])
 
   // Parallel Correctness Tests
 #if OMP
-
+  // omp_set_num_threads(6);
   dict = setup(keys, values);
   outmsg("    Starting simple parallel correctness test... \n");
   start_time = currentSeconds();
 
   test_par_setup(dict, keys);
-  printf("suppp\n");
   test_par_insert(dict, keys, values);
-  printf("nooo\n");
   test_par_delete(dict, keys, values);
 
   delta_time = currentSeconds() - start_time;
