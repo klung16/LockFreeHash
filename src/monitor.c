@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
   test_delete(dict, keys, values, num_delete);
   
   delta_time = currentSeconds() - start_time;
-  outmsg("    Complete! Took %f secs\n", delta_time);
+  outmsg("    ggComplete! Took %f secs\n", delta_time);
   
   hdict_free(dict);
   free(keys);

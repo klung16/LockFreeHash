@@ -36,6 +36,14 @@ if __name__ == "__main__":
         parser.exit()
         
     print("  --------------------------")
+    print("  Running coarse-grained-monitor")    
+    subprocess.call(["./coarse-grained-monitor", "-n", str(args.num_ops), "-l", str(args.load_factor),
+                     "-d", str(args.delete_ratio), "-i", str(args.insert_ratio), "-t", str(args.num_threads)])
+    print("  Complete!")
+    print("  --------------------------")
+    print("\n")
+        
+    print("  --------------------------")
     print("  Running fine-grained-monitor")    
     subprocess.call(["./fine-grained-monitor", "-n", str(args.num_ops), "-l", str(args.load_factor),
                      "-d", str(args.delete_ratio), "-i", str(args.insert_ratio), "-t", str(args.num_threads)])
