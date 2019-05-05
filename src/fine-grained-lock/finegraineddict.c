@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "../hdict.h"
-#include "locklist.h"
+#include "finegrainedlist.h"
 
 struct hdict_header {
   llist_t *table;

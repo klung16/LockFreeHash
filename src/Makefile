@@ -17,8 +17,8 @@ HFILES-SEQ= hdict.h coarse-grained-lock/coarsegrainedlist.h util/cycletimer.h ut
 CFILES-CLOCK = simpletests.c coarse-grained-lock/*.c util/cycletimer.c util/util.c
 HFILES-CLOCK = hdict.h coarse-grained-lock/*.h util/cycletimer.h util/util.h
 
-CFILES-LOCK = simpletests.c lock/*.c util/cycletimer.c util/util.c
-HFILES-LOCK = hdict.h lock/*.h util/cycletimer.h util/util.h
+CFILES-LOCK = simpletests.c fine-grained-lock/*.c util/cycletimer.c util/util.c
+HFILES-LOCK = hdict.h fine-grained-lock/*.h util/cycletimer.h util/util.h
 
 CFILES-HOH = simpletests.c hoh/*.c util/cycletimer.c util/util.c
 HFILES-HOH = hdict.h hoh/*.h util/cycletimer.h util/util.h
@@ -38,8 +38,8 @@ HFILES-MSEQ = hdict.h coarse-grained-lock/*.h util/cycletimer.h util/util.h
 CFILES-MCLOCK = monitor.c coarse-grained-lock/*.c util/cycletimer.c util/util.c
 HFILES-MCLOCK = hdict.h coarse-grained-lock/coarsegrainedlist.h util/cycletimer.h util/util.h
 
-CFILES-MLOCK = monitor.c lock/*.c util/cycletimer.c util/util.c
-HFILES-MLOCK = hdict.h lock/*.h util/cycletimer.h util/util.h
+CFILES-MLOCK = monitor.c fine-grained-lock/*.c util/cycletimer.c util/util.c
+HFILES-MLOCK = hdict.h fine-grained-lock/*.h util/cycletimer.h util/util.h
 
 CFILES-MHOH = monitor.c hoh/*.c util/cycletimer.c util/util.c
 HFILES-MHOH = hdict.h hoh/*.h util/cycletimer.h util/util.h

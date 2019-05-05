@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "locklist.h"
+#include "finegrainedlist.h"
 
 typedef struct list_node lnode;
 typedef struct list_header llist;

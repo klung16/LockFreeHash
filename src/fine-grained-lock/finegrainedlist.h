@@ -1,5 +1,5 @@
-#ifndef _LOCKLIST_H_
-#define _LOCKLIST_H_
+#ifndef _FINEGRAINEDLOCKLIST_H_
+#define _FINEGRAINEDLOCKLIST_H_
 
 #include <pthread.h>
 
