@@ -3,6 +3,7 @@ OMP=-fopenmp -DOMP
 DEBUG=0
 CFLAGS-SEQ=-g -O3 -Wall -DDEBUG=$(DEBUG) -std=c99 -DOMP=0
 CFLAGS-OMP=-g -O3 -Wall -DDEBUG=$(DEBUG) -std=c99 -DOMP=1
+CFLAGS-RTM=-march=native -mavx -g -O3 -Wall -DDEBUG=$(DEBUG) -std=c99 -DOMP=1
 LDFLAGS= -lm
 
 CFILES-LF-LIST = lf/*.c lf/test/*.c util/cycletimer.c
@@ -25,6 +26,9 @@ HFILES-LF = hdict.h lf/*.h util/cycletimer.h util/util.h
 CFILES-LFBACK = simpletests.c lfback/*.c util/cycletimer.c util/util.c
 HFILES-LFBACK = hdict.h lfback/*.h util/cycletimer.h util/util.h
 
+CFILES-RTM = simpletests.c rtm/*.c util/cycletimer.c util/util.c
+HFILES-RTM = hdict.h rtm/*.h util/cycletimer.h util/util.h
+
 CFILES-HOH = simpletests.c hoh/*.c util/cycletimer.c util/util.c
 HFILES-HOH = hdict.h hoh/*.h util/cycletimer.h util/util.h
 
@@ -43,7 +47,10 @@ HFILES-MLF = hdict.h lf/*.h util/cycletimer.h util/util.h
 CFILES-MLFBACK = monitor.c lfback/*.c util/cycletimer.c util/util.c
 HFILES-MLFBACK = hdict.h lfback/*.h util/cycletimer.h util/util.h
 
-all: lf-list-test lfback-list-test seq-test coarse-grained-omp-test fine-grained-omp-test lf-omp-test lfback-omp-test hoh-omp-test seq-monitor coarse-grained-monitor fine-grained-monitor lf-monitor lfback-monitor
+CFILES-MRTM = monitor.c rtm/*.c util/cycletimer.c util/util.c
+HFILES-MRTM = hdict.h rtm/*.h util/cycletimer.h util/util.h
+
+all: lf-list-test lfback-list-test seq-test coarse-grained-omp-test fine-grained-omp-test lf-omp-test lfback-omp-test rtm-omp-test hoh-omp-test seq-monitor coarse-grained-monitor fine-grained-monitor lf-monitor lfback-monitor rtm-monitor
 
 lf-list-test: $(CFILES-LF-LIST) $(HFILES-LF-LIST)
 	$(CC) $(CFLAGS-OMP) $(OMP) -o lf-list-test $(CFILES-LF-LIST) $(LDFLAGS)
@@ -65,6 +72,9 @@ lf-omp-test: $(CFILES-LF) $(HFILES-LF)
 
 lfback-omp-test: $(CFILES-LFBACK) $(HFILES-LFBACK)
 	$(CC) $(CFLAGS-OMP) $(OMP) -o lfback-omp-test $(CFILES-LFBACK) $(LDFLAGS)
+	
+rtm-omp-test: $(CFILES-RTM) $(HFILES-RTM)
+	$(CC) $(CFLAGS-RTM) $(OMP) -o rtm-omp-test $(CFILES-RTM) $(LDFLAGS)
 
 hoh-omp-test: $(CFILES-HOH) $(HFILES-HOH)
 	$(CC) $(CFLAGS-OMP) $(OMP) -o hoh-omp-test $(CFILES-HOH) $(LDFLAGS)
@@ -83,6 +93,9 @@ lf-monitor: $(CFILES-MLF) $(HFILES-MLF)
 
 lfback-monitor: $(CFILES-MLFBACK) $(HFILES-MLFBACK)
 	$(CC) $(CFLAGS-OMP) $(OMP) -o lfback-monitor $(CFILES-MLFBACK) $(LDFLAGS)
+	
+rtm-monitor: $(CFILES-MRTM) $(HFILES-MRTM)
+	$(CC) $(CFLAGS-RTM) $(OMP) -o rtm-monitor $(CFILES-MRTM) $(LDFLAGS)
 
 clean:
-	rm -f lf-list-test lfback-list-test seq-test coarse-grained-omp-test fine-grained-omp-test lf-omp-test lfback-omp-test hoh-omp-test coarse-grained-monitor seq-monitor fine-grained-monitor lf-monitor lfback-monitor
+	rm -f lf-list-test lfback-list-test seq-test coarse-grained-omp-test fine-grained-omp-test lf-omp-test lfback-omp-test rtm-omp-test hoh-omp-test coarse-grained-monitor seq-monitor fine-grained-monitor lf-monitor lfback-monitor rtm-monitor
