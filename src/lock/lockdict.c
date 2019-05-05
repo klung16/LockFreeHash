@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "hdict.h"
+#include "../hdict.h"
 #include "locklist.h"
 
 struct hdict_header {

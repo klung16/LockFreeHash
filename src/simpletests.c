@@ -1,20 +1,27 @@
-/*
- * Simple correctness testing
- */
-
 #include <stdio.h>
 #include <stdlib.h>
+#include <getopt.h>
 #include <assert.h>
 #include <stdbool.h>
+#include <omp.h>
 
 #include "hdict.h"
-#include "lflist.h"
-#include "cycletimer.h"
+#include "util/cycletimer.h"
+#include "util/util.h"
 
-#define NUM_BUCKETS 100
+#define NUM_BUCKETS 10000
 #define NUM_TEST_VALUES 100000
 #define RAND_KEY_SEED 0
 #define RAND_VAL_SEED 17
+
+static void usage() {
+  char *use_string = "[-s SEQ]";
+  outmsg("Usage: %s\n", use_string);
+  outmsg("   -h               Print this message\n");
+  outmsg("   -s               Turn on sequential test\n");
+  done();
+  exit(0);
+}
 
 bool contains(int* keys, int val, int i) {
   int j;
@@ -34,11 +41,9 @@ hdict_t setup(int* keys, int* values) {
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     if (i <= NUM_TEST_VALUES/2) {
       val = rand();
-      // val = i;
-    // Negative keys
     } else {
+      // Negative keys
       val = -rand();
-      // val = i;
     }
 
     while (contains(keys, val, i)) {
@@ -52,8 +57,8 @@ hdict_t setup(int* keys, int* values) {
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     if (i <= (0.25)*NUM_TEST_VALUES || i > (0.75)*NUM_TEST_VALUES) {
       values[i] = rand();
-    // Negative keys
     } else {
+      // Negative keys
       values[i] = -rand();
     }
   }
@@ -65,9 +70,9 @@ void test_seq_setup(hdict_t dict, int* keys) {
   int i;
   assert(dict != NULL);
 
-  // for (i = 0; i < NUM_TEST_VALUES; i++) {
-  //   hdict_delete(dict, keys[i]);
-  // }
+  for (i = 0; i < NUM_TEST_VALUES; i++) {
+    hdict_delete(dict, keys[i]);
+  }
 
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     assert(hdict_lookup(dict, keys[i]) == NULL);
@@ -130,7 +135,7 @@ void test_seq_delete(hdict_t dict, int* keys, int* values) {
 void test_par_setup(hdict_t dict, int* keys) {
   int i;
   assert(dict != NULL);
-
+#if OMP
   #pragma omp parallel for
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     hdict_delete(dict, keys[i]);
@@ -140,6 +145,7 @@ void test_par_setup(hdict_t dict, int* keys) {
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     assert(hdict_lookup(dict, keys[i]) == NULL);
   }
+#endif
 }
 
 void test_par_insert(hdict_t dict, int* keys, int* values) {
@@ -173,6 +179,7 @@ void test_par_insert(hdict_t dict, int* keys, int* values) {
 
     assert(actual == expected);
   }
+
 }
 
 void test_par_delete(hdict_t dict, int* keys, int* values) {
@@ -186,13 +193,8 @@ void test_par_delete(hdict_t dict, int* keys, int* values) {
   #pragma omp parallel for
   for (i = 0; i < NUM_TEST_VALUES; i++) {
     if (i < NUM_TEST_VALUES/2) {
-      // actual = *hdict_lookup(dict, keys[i]);
-      // if (actual != NULL) {
-      // printf("%d %d %d\n", keys[i], values[i], actual);
-      // }
       assert(hdict_lookup(dict, keys[i]) == NULL);
     } else {
-      // printf("%d %d %d\n", keys[i], values[i], actual);
       actual = *hdict_lookup(dict, keys[i]);
       assert(actual == values[i]);
     }
@@ -209,77 +211,69 @@ void test_par_delete(hdict_t dict, int* keys, int* values) {
   }
 }
 
-
-void simple_lf_test(int* keys, int* values) {
-
-#if OMP
-  llist_t list = llist_new();
-  #pragma omp parallel for
-  for (int i = 0; i < NUM_TEST_VALUES; i++) {
-    llist_insert(list, keys[i], values[i]);
-  }
-//
-  #pragma omp barrier
-//
-  fprintf(stderr, "Complete Insertions\n");
-//
-  #pragma omp parallel for
-  for (int i = 0; i < NUM_TEST_VALUES; i++) {
-    lnode_t actual = llist_lookup(list, keys[i]);
-    // fprintf(stderr, "%d %d %d\n", actual->val, keys[i], values[i]);
-    assert(actual->val == values[i]);
-  }
-  llist_free(list);
-#endif
-
-
-}
-
 int main(int argc, char *argv[])
 {
+  int c;
+  bool seq = false;
   double start_time, delta_time;
+
   fprintf(stdout, "Starting simple correctness tests... \n");
+
+  /* Grabs Arguments */
+  char *optstring = "hs";
+  while ((c = getopt(argc, argv, optstring)) != -1) {
+    switch(c) {
+      case 'h':
+        usage();
+        break;
+      case 's':
+        seq = true;
+        break;
+      default:
+        outmsg("Unknown option '%c'\n", c);
+        usage();
+        done();
+        exit(1);
+    }
+  }
+
   int *keys = malloc(sizeof(int) * NUM_TEST_VALUES);
   int *values = malloc(sizeof(int) * NUM_TEST_VALUES);
-  // int keys[NUM_TEST_VALUES];
-  // int values[NUM_TEST_VALUES];
-  hdict_t dict;
+  hdict_t dict = setup(keys, values);
 
   // Sequential Correctness Tests
-  fprintf(stdout, "Starting simple sequential correctness test... \n");
-  dict = setup(keys, values);
-  start_time = currentSeconds();
-  test_seq_setup(dict, keys);
-  test_seq_insert(dict, keys, values);
-  // test_seq_delete(dict, keys, values);
-  hdict_free(dict);
-  delta_time = currentSeconds() - start_time;
-  fprintf(stdout, "Complete! Took %f secs\n", delta_time);
+  if (seq) {
+    outmsg("    Starting simple sequential correctness test... \n");
+    start_time = currentSeconds();
+    test_seq_setup(dict, keys);
+    test_seq_insert(dict, keys, values);
+    test_seq_delete(dict, keys, values);
+    delta_time = currentSeconds() - start_time;
+    outmsg("    Complete! Took %f secs\n", delta_time);
+    hdict_free(dict);
+  }
 
   // Parallel Correctness Tests
 #if OMP
-  fprintf(stdout, "Starting simple parallel lf-list correctness test... \n");
-  setup(keys, values);
-  simple_lf_test(keys, values);
-  fprintf(stdout, "Complete! \n");
-  fprintf(stdout, "Starting simple parallel correctness test... \n");
+  // omp_set_num_threads(6);
   dict = setup(keys, values);
+  outmsg("    Starting simple parallel correctness test... \n");
   start_time = currentSeconds();
+
   test_par_setup(dict, keys);
-  printf("Setup complete\n");
   test_par_insert(dict, keys, values);
-  printf("Insert complete\n");
   test_par_delete(dict, keys, values);
-  printf("Delete complete\n");
-  hdict_free(dict);
+
   delta_time = currentSeconds() - start_time;
-  fprintf(stdout, "Complete! Took %f secs\n", delta_time);
+  outmsg("    Complete! Took %f secs\n", delta_time);
+
 #endif
 
-  // fprintf(stdout, "Tests complete! Exiting...\n");
+  hdict_free(dict);
   free(keys);
   free(values);
 
-  // printf("%d %d %d %d %d\n", sizeof(bool), sizeof(long long), sizeof(llist_t), sizeof(struct list_node), sizeof(struct list_header));
+  outmsg("Tests complete! Exiting...\n");
+
   return 1;
 }
