@@ -1,4 +1,4 @@
-# Script to run all monitor 
+# Script to run all monitor
 
 import sys, argparse, subprocess
 
@@ -9,11 +9,11 @@ DEFAULT_INSERT_RATIO = 0.1
 DEFAULT_NUM_THREADS = 4
 
 if __name__ == "__main__":
-    
+
     print("\n")
     print("-------------------------- Starting monitor_all --------------------------")
     print("\n")
-    
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-n", dest="num_ops", default=DEFAULT_NUM_TEST_VALUES, type=int,
                         help="Number of operations (Default to 1000000)")
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     parser.add_argument("-s", action="store_false", dest="seq", default=True, help="Turn off sequential implementation")
     parser.add_argument("-c", action="store_false", dest="coarse_grained", default=True, help="Turn off sequential implementation")
     args = parser.parse_args()
-    
+
     #Legality Check
     write_ratio = args.delete_ratio + args.insert_ratio
     if (args.num_ops <= 0 or args.load_factor <= 0 or args.num_threads <= 0 or
@@ -36,63 +36,63 @@ if __name__ == "__main__":
         print("Invalid arguments!")
         parser.print_help()
         parser.exit()
-        
+
     if (args.seq):
         print("  --------------------------")
-        print("  Running seq-monitor")    
+        print("  Running seq-monitor")
         subprocess.call(["./seq-monitor", "-n", str(args.num_ops), "-l", str(args.load_factor),
                          "-d", str(args.delete_ratio), "-i", str(args.insert_ratio), "-t", str(args.num_threads)])
         print("  Complete!")
         print("  --------------------------")
         print("\n")
-        
+
     if (args.coarse_grained):
         print("  --------------------------")
-        print("  Running coarse-grained-monitor")    
+        print("  Running coarse-grained-monitor")
         subprocess.call(["./coarse-grained-monitor", "-n", str(args.num_ops), "-l", str(args.load_factor),
                          "-d", str(args.delete_ratio), "-i", str(args.insert_ratio), "-t", str(args.num_threads)])
         print("  Complete!")
         print("  --------------------------")
         print("\n")
-        
+
     print("  --------------------------")
-    print("  Running fine-grained-monitor")    
+    print("  Running fine-grained-monitor")
     subprocess.call(["./fine-grained-monitor", "-n", str(args.num_ops), "-l", str(args.load_factor),
                      "-d", str(args.delete_ratio), "-i", str(args.insert_ratio), "-t", str(args.num_threads)])
     print("  Complete!")
     print("  --------------------------")
     print("\n")
-        
+
     print("  --------------------------")
-    print("  Running lf-monitor")    
+    print("  Running hoh-monitor")
+    subprocess.call(["./hoh-monitor", "-n", str(args.num_ops), "-l", str(args.load_factor),
+                     "-d", str(args.delete_ratio), "-i", str(args.insert_ratio), "-t", str(args.num_threads)])
+    print("  Complete!")
+    print("  --------------------------")
+    print("\n")
+
+    print("  --------------------------")
+    print("  Running lf-monitor")
     subprocess.call(["./lf-monitor", "-n", str(args.num_ops), "-l", str(args.load_factor),
                      "-d", str(args.delete_ratio), "-i", str(args.insert_ratio), "-t", str(args.num_threads)])
     print("  Complete!")
     print("  --------------------------")
     print("\n")
-    
+
     print("  --------------------------")
-    print("  Running lfback-monitor")    
+    print("  Running lfback-monitor")
     subprocess.call(["./lfback-monitor", "-n", str(args.num_ops), "-l", str(args.load_factor),
                      "-d", str(args.delete_ratio), "-i", str(args.insert_ratio), "-t", str(args.num_threads)])
     print("  Complete!")
     print("  --------------------------")
     print("\n")
-    
+
     print("  --------------------------")
-    print("  Running rtm-monitor")    
+    print("  Running rtm-monitor")
     subprocess.call(["./rtm-monitor", "-n", str(args.num_ops), "-l", str(args.load_factor),
                      "-d", str(args.delete_ratio), "-i", str(args.insert_ratio), "-t", str(args.num_threads)])
     print("  Complete!")
     print("  --------------------------")
     print("\n")
-    
+
     print("-------------------------- All Benchmarking Tests Complete --------------------------")
-    
-        
-    
-        
-        
-        
-    
-        
