@@ -9,9 +9,9 @@
 #include <omp.h>
 
 #include "../lflist.h"
-#include "../../cycletimer.h"
+#include "../../util/cycletimer.h"
 
-#define NUM_TEST_VALUES 100000
+#define NUM_TEST_VALUES 50000
 #define RAND_KEY_SEED 0
 #define RAND_VAL_SEED 17
 

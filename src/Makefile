@@ -5,49 +5,54 @@ CFLAGS-SEQ=-g -O3 -Wall -DDEBUG=$(DEBUG) -std=c99 -DOMP=0
 CFLAGS-OMP=-g -O3 -Wall -DDEBUG=$(DEBUG) -std=c99 -DOMP=1
 LDFLAGS= -lm
 
-CFILES-LOCK = simpletests.c lock/*.c cycletimer.c util.c
-HFILES-LOCK = hdict.h lock/*.h cycletimer.h util.h
-CFILES-LF = simpletests.c lf/*.c cycletimer.c util.c
-HFILES-LF = hdict.h lf/*.h cycletimer.h util.h
-CFILES-LF-LIST = lf/*.c lf/test/*.c cycletimer.c
-HFILES-LF-LIST = lf/*.h cycletimer.h
-CFILES-LFBACK = simpletests.c lfback/*.c cycletimer.c util.c
-HFILES-LFBACK = hdict.h lfback/*.h cycletimer.h util.h
-CFILES-LFBACK-LIST = lfback/*.c lfback/test/*.c cycletimer.c
-HFILES-LFBACK-LIST = lfback/*.h cycletimer.h
-CFILES-M = monitor.c lf/*.c cycletimer.c util.c
-HFILES-M = hdict.h lf/*.h cycletimer.h util.h
-CFILES-ML = monitor.c lock/*.c cycletimer.c util.c
-HFILES-ML = hdict.h lock/*.h cycletimer.h util.h
+CFILES-LF-LIST = lf/*.c lf/test/*.c util/cycletimer.c
+HFILES-LF-LIST = lf/*.h util/cycletimer.h
+CFILES-LFBACK-LIST = lfback/*.c lfback/test/*.c util/cycletimer.c
+HFILES-LFBACK-LIST = lfback/*.h util/cycletimer.h
 
-all: lock-seq-test lock-openmp-test lf-seq-test lf-openmp-test lf-list-test lfback-seq-test lfback-openmp-test lfback-list-test monitor lock-monitor
+CFILES-LOCK = simpletests.c lock/*.c util/cycletimer.c util/util.c
+HFILES-LOCK = hdict.h lock/*.h util/cycletimer.h util/util.h
 
-lock-seq-test: $(CFILES-LOCK) $(HFILES-LOCK)
-	$(CC) $(CFLAGS-SEQ) -o lock-seq-test $(CFILES-LOCK) $(LDFLAGS)
+CFILES-LF = simpletests.c lf/*.c util/cycletimer.c util/util.c
+HFILES-LF = hdict.h lf/*.h util/cycletimer.h util/util.h
 
-lock-openmp-test: $(CFILES-LOCK) $(HFILES-LOCK)
-	$(CC) $(CFLAGS-OMP) $(OMP) -o lock-omp-test $(CFILES-LOCK) $(LDFLAGS)
+CFILES-LFBACK = simpletests.c lfback/*.c util/cycletimer.c util/util.c
+HFILES-LFBACK = hdict.h lfback/*.h util/cycletimer.h util/util.h
 
-lf-seq-test: $(CFILES-LF) $(HFILES-LF)
-	$(CC) $(CFLAGS-SEQ) -o lf-seq-test $(CFILES-LF) $(LDFLAGS)
+CFILES-MLOCK = monitor.c lock/*.c util/cycletimer.c util/util.c
+HFILES-MLOCK = hdict.h lock/*.h util/cycletimer.h util/util.h
 
-lf-openmp-test: $(CFILES-LF) $(HFILES-LF)
-	$(CC) $(CFLAGS-OMP) $(OMP) -o lf-omp-test $(CFILES-LF) $(LDFLAGS)
+CFILES-MLF = monitor.c lf/*.c util/cycletimer.c util/util.c
+HFILES-MLF = hdict.h lf/*.h util/cycletimer.h util/util.h
+
+CFILES-MLFBACK = monitor.c lfback/*.c util/cycletimer.c util/util.c
+HFILES-MLFBACK = hdict.h lfback/*.h util/cycletimer.h util/util.h
+
+all: lf-list-test lfback-list-test fine-grained-omp-test lf-omp-test lfback-omp-test fine-grained-monitor lf-monitor lfback-monitor
 
 lf-list-test: $(CFILES-LF-LIST) $(HFILES-LF-LIST)
 	$(CC) $(CFLAGS-OMP) $(OMP) -o lf-list-test $(CFILES-LF-LIST) $(LDFLAGS)
-
-lfback-seq-test: $(CFILES-LFBACK) $(HFILES-LFBACK)
-	$(CC) $(CFLAGS-SEQ) -o lfback-seq-test $(CFILES-LFBACK) $(LDFLAGS)
-
-lfback-openmp-test: $(CFILES-LFBACK) $(HFILES-LFBACK)
-	$(CC) $(CFLAGS-OMP) $(OMP) -o lfback-omp-test $(CFILES-LFBACK) $(LDFLAGS)
-
+	
 lfback-list-test: $(CFILES-LFBACK-LIST) $(HFILES-LFBACK-LIST)
 	$(CC) $(CFLAGS-OMP) $(OMP) -o lfback-list-test $(CFILES-LFBACK-LIST) $(LDFLAGS)
 
-monitor: $(CFILES-M) $(HFILES-M)
-	$(CC) $(CFLAGS-OMP) $(OMP) -o monitor $(CFILES-M) $(LDFLAGS)
+fine-grained-omp-test: $(CFILES-LOCK) $(HFILES-LOCK)
+	$(CC) $(CFLAGS-OMP) $(OMP) -o fine-grained-omp-test $(CFILES-LOCK) $(LDFLAGS)
 
-lock-monitor: $(CFILES-ML) $(HFILES-ML)
-	$(CC) $(CFLAGS-OMP) $(OMP) -o lock-monitor $(CFILES-ML) $(LDFLAGS)
+lf-omp-test: $(CFILES-LF) $(HFILES-LF)
+	$(CC) $(CFLAGS-OMP) $(OMP) -o lf-omp-test $(CFILES-LF) $(LDFLAGS)
+
+lfback-omp-test: $(CFILES-LFBACK) $(HFILES-LFBACK)
+	$(CC) $(CFLAGS-OMP) $(OMP) -o lfback-omp-test $(CFILES-LFBACK) $(LDFLAGS)
+	
+fine-grained-monitor: $(CFILES-MLOCK) $(HFILES-MLOCK)
+	$(CC) $(CFLAGS-OMP) $(OMP) -o fine-grained-monitor $(CFILES-MLOCK) $(LDFLAGS)
+		
+lf-monitor: $(CFILES-MLF) $(HFILES-MLF)
+	$(CC) $(CFLAGS-OMP) $(OMP) -o lf-monitor $(CFILES-MLF) $(LDFLAGS)
+	
+lfback-monitor: $(CFILES-MLFBACK) $(HFILES-MLFBACK)
+	$(CC) $(CFLAGS-OMP) $(OMP) -o lfback-monitor $(CFILES-MLFBACK) $(LDFLAGS)
+	
+clean:
+	rm -f lf-list-test lfback-list-test fine-grained-omp-test lf-omp-test lfback-omp-test fine-grained-monitor lf-monitor lfback-monitor

@@ -9,8 +9,8 @@
 #include <omp.h>
 
 #include "hdict.h"
-#include "cycletimer.h"
-#include "util.h"
+#include "util/cycletimer.h"
+#include "util/util.h"
 
 #define DEFAULT_LOAD_FACTOR 10
 #define DEFAULT_NUM_TEST_VALUES 1000000
@@ -28,9 +28,9 @@ static void usage() {
   outmsg("   -h               Print this message\n");
   outmsg("   -n NUM_OPS       Number of operations (Default to %d)\n", DEFAULT_NUM_TEST_VALUES);
   outmsg("   -l LOAD_FACTOR   Load factor (number of data points / number of buckets)\n");
-  outmsg("   -d DELETE_RATIO  Delete ratio for total number of operations [%]\n");
-  outmsg("   -i INSERT_RATIO  Insert ratio for total number of operations [%]\n");
-  outmsg("                        0% <= DELETE_RATIO + INSERT_RATIO <= 100%\n");
+  outmsg("   -d DELETE_RATIO  Delete ratio for total number of operations\n");
+  outmsg("   -i INSERT_RATIO  Insert ratio for total number of operations\n");
+  outmsg("                        0.0 <= DELETE_RATIO + INSERT_RATIO <= 1.0\n");
   outmsg("   -t THD    Set number of threads\n");
   done();
   exit(0);
@@ -53,7 +53,7 @@ hdict_t setup(int* keys, int* values, int num_ops, int load_factor) {
   
   num_buckets = round(num_ops / load_factor);
   
-  outmsg("      The hash table is initilized with %d buckets.\n", num_buckets);
+  outmsg("        The hash table is initilized with %d buckets.\n", num_buckets);
   
   return hdict_new(num_buckets);
 }
@@ -154,20 +154,20 @@ int main(int argc, char *argv[]) {
   
   search_ratio = (1 - write_ratio);
   
-  outmsg("  Running the program with %d operations, load factor = %d, delete ratio = %.2f, insert ratio = %.2f, search ratio = %.2f\n", 
+  outmsg("    Running the program with %d operations, load factor = %d, delete ratio = %.2f, insert ratio = %.2f, search ratio = %.2f\n", 
             num_ops, load_factor, delete_ratio, insert_ratio, search_ratio);
-  outmsg("  Running with %d threads.  Max possible is %d.\n", num_threads, omp_get_max_threads());
+  outmsg("    Running with %d threads.  Max possible is %d.\n", num_threads, omp_get_max_threads());
   omp_set_num_threads(num_threads);
   
   /* Set up */
-  outmsg("  The program is setting up the data...");
+  outmsg("        The program is setting up the data...");
   num_insert = round(num_ops * insert_ratio);
   num_search = round(num_ops * search_ratio);
   num_delete = round(num_ops * delete_ratio);
   int *keys = malloc(sizeof(int) * num_ops);
   int *values = malloc(sizeof(int) * num_ops);
   dict = setup(keys, values, num_ops, load_factor);
-  outmsg("  Set up complete!");
+  outmsg("        Set up complete!");
   
   start_time = currentSeconds();
   
@@ -176,12 +176,12 @@ int main(int argc, char *argv[]) {
   test_delete(dict, keys, values, num_delete);
   
   delta_time = currentSeconds() - start_time;
-  fprintf(stdout, "Complete! Took %f secs\n", delta_time);
+  outmsg("    Complete! Took %f secs\n", delta_time);
   
   hdict_free(dict);
   free(keys);
   free(values);
-  fprintf(stdout, "Tests complete! Exiting...\n");
+  // outmsg("    Tests complete! Exiting...\n");
   
   return 0;
 }

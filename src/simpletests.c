@@ -6,11 +6,11 @@
 #include <omp.h>
 
 #include "hdict.h"
-#include "cycletimer.h"
-#include "util.h"
+#include "util/cycletimer.h"
+#include "util/util.h"
 
-#define NUM_BUCKETS 1000
-#define NUM_TEST_VALUES 10000
+#define NUM_BUCKETS 10000
+#define NUM_TEST_VALUES 100000
 #define RAND_KEY_SEED 0
 #define RAND_VAL_SEED 17
 
