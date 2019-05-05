@@ -29,7 +29,7 @@ void llist_search(llist *L, int key, lnode **prev_ptr, lnode **cur_ptr) {
   cur = prev->next;
   pthread_mutex_lock(&(cur->mutex));
 
-  while (key < cur->key) {
+  while (key > cur->key) {
     old_prev = prev;
     prev = cur;
     cur = cur->next;
@@ -46,8 +46,13 @@ void llist_insert(llist *L, int key, int val) {
   lnode *prev, *cur;
   llist_search(L, key, &prev, &cur);
 
-  node->next = cur;
-  prev->next = node;
+  if (key == cur->key) {
+    cur->val = val;
+    free(node);
+  } else {
+    node->next = cur;
+    prev->next = node;
+  }
   pthread_mutex_unlock(&(prev->mutex));
   pthread_mutex_unlock(&(cur->mutex));
 }
@@ -70,7 +75,12 @@ void llist_delete(llist *L, int key) {
 lnode *llist_lookup(llist *L, int key) {
   lnode *prev, *cur;
   llist_search(L, key, &prev, &cur);
-  return cur;
+
+  lnode *ret = NULL;
+  if (cur->key == key) ret = cur;
+  pthread_mutex_unlock(&(prev->mutex));
+  pthread_mutex_unlock(&(cur->mutex));
+  return ret;
 }
 
 void llist_free(llist *L) {
