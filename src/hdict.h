@@ -2,6 +2,7 @@
 #define _HDICT_H_
 
 typedef struct hdict_header* hdict_t;
+
 // hash function
 int hash(hdict_t H, int key);
 
