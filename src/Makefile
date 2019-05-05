@@ -55,6 +55,10 @@ HFILES-MRTM = hdict.h rtm/*.h util/cycletimer.h util/util.h
 
 all: lf-list-test lfback-list-test seq-test coarse-grained-omp-test fine-grained-omp-test hoh-omp-test lf-omp-test lfback-omp-test rtm-omp-test seq-monitor coarse-grained-monitor fine-grained-monitor hoh-monitor lf-monitor lfback-monitor rtm-monitor
 
+all-no-rtm: lf-list-test lfback-list-test seq-test coarse-grained-omp-test fine-grained-omp-test hoh-omp-test lf-omp-test lfback-omp-test seq-monitor coarse-grained-monitor fine-grained-monitor hoh-monitor lf-monitor lfback-monitor
+
+rtm: rtm-omp-test rtm-monitor
+
 lf-list-test: $(CFILES-LF-LIST) $(HFILES-LF-LIST)
 	$(CC) $(CFLAGS-OMP) $(OMP) -o lf-list-test $(CFILES-LF-LIST) $(LDFLAGS)
 
@@ -104,4 +108,4 @@ rtm-monitor: $(CFILES-MRTM) $(HFILES-MRTM)
 	$(CC) $(CFLAGS-RTM) $(OMP) -o rtm-monitor $(CFILES-MRTM) $(LDFLAGS)
 
 clean:
-	rm -f lf-list-test lfback-list-test seq-test coarse-grained-omp-test fine-grained-omp-test hoh-omp-test lf-omp-test lfback-omp-test rtm-omp-test coarse-grained-monitor seq-monitor fine-grained-monitor hoh-monitor lf-monitor lfback-monitor rtm-monitor
+	rm -f *.sh.* lf-list-test lfback-list-test seq-test coarse-grained-omp-test fine-grained-omp-test hoh-omp-test lf-omp-test lfback-omp-test rtm-omp-test coarse-grained-monitor seq-monitor fine-grained-monitor hoh-monitor lf-monitor lfback-monitor rtm-monitor

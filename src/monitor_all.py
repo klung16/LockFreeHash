@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 # Script to run all monitor
 
 import sys, argparse, subprocess
