@@ -58,28 +58,55 @@ hdict_t setup(int* keys, int* values, int num_ops, int load_factor) {
   return hdict_new(num_buckets);
 }
 
-void test_insert(hdict_t dict, int* keys, int* values, int num_insert) {
+void test_seq_insert(hdict_t dict, int* keys, int* values, int num_insert) {
   int i;
-  #pragma omp parallel for
   for (i = 0; i < num_insert; i++) {
     hdict_insert(dict, keys[i], values[i]);
   }
 }
 
-void test_lookup(hdict_t dict, int* keys, int* values, int num_search) {
+void test_seq_lookup(hdict_t dict, int* keys, int* values, int num_search) {
   int i;
-  #pragma omp parallel for
   for (i = 0; i < num_search; i++) {
     hdict_lookup(dict, keys[i]);
   }
 }
 
+void test_seq_delete(hdict_t dict, int* keys, int* values, int num_delete) { 
+  int i;
+  for (i = 0; i < num_delete; i++) {
+    hdict_delete(dict, keys[i]);
+  }
+}
+
+void test_insert(hdict_t dict, int* keys, int* values, int num_insert) {
+#if OMP
+  int i;
+  #pragma omp parallel for
+  for (i = 0; i < num_insert; i++) {
+    hdict_insert(dict, keys[i], values[i]);
+  }
+#endif
+}
+
+void test_lookup(hdict_t dict, int* keys, int* values, int num_search) {
+#if OMP
+  int i;
+  #pragma omp parallel for
+  for (i = 0; i < num_search; i++) {
+    hdict_lookup(dict, keys[i]);
+  }
+#endif
+}
+
 void test_delete(hdict_t dict, int* keys, int* values, int num_delete) { 
+#if OMP
   int i;
   #pragma omp parallel for
   for (i = 0; i < num_delete; i++) {
     hdict_delete(dict, keys[i]);
   }
+#endif
 }
 
 int main(int argc, char *argv[]) {
@@ -156,8 +183,13 @@ int main(int argc, char *argv[]) {
   
   outmsg("    Running the program with %d operations, load factor = %d, delete ratio = %.2f, insert ratio = %.2f, search ratio = %.2f\n", 
             num_ops, load_factor, delete_ratio, insert_ratio, search_ratio);
-  outmsg("    Running with %d threads.  Max possible is %d.\n", num_threads, omp_get_max_threads());
-  omp_set_num_threads(num_threads);
+  
+#if OMP
+    outmsg("    Running with %d threads.  Max possible is %d.\n", num_threads, omp_get_max_threads());
+    omp_set_num_threads(num_threads);
+#else
+    outmsg("    Running sequentially.\n");
+#endif
   
   /* Set up */
   outmsg("        The program is setting up the data...");
@@ -171,17 +203,22 @@ int main(int argc, char *argv[]) {
   
   start_time = currentSeconds();
   
-  test_insert(dict, keys, values, num_insert);
-  test_lookup(dict, keys, values, num_search);
-  test_delete(dict, keys, values, num_delete);
+#if OMP
+    test_insert(dict, keys, values, num_insert);
+    test_lookup(dict, keys, values, num_search);
+    test_delete(dict, keys, values, num_delete);
+#else
+    test_seq_insert(dict, keys, values, num_insert);
+    test_seq_lookup(dict, keys, values, num_search);
+    test_seq_delete(dict, keys, values, num_delete);
+#endif
   
   delta_time = currentSeconds() - start_time;
-  outmsg("    ggComplete! Took %f secs\n", delta_time);
+  outmsg("    Complete! Took %f secs\n", delta_time);
   
   hdict_free(dict);
   free(keys);
   free(values);
-  // outmsg("    Tests complete! Exiting...\n");
   
   return 0;
 }

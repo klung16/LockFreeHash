@@ -239,10 +239,11 @@ int main(int argc, char *argv[])
 
   int *keys = malloc(sizeof(int) * NUM_TEST_VALUES);
   int *values = malloc(sizeof(int) * NUM_TEST_VALUES);
-  hdict_t dict = setup(keys, values);
+  hdict_t dict;
 
   // Sequential Correctness Tests
   if (seq) {
+    dict = setup(keys, values);
     outmsg("    Starting simple sequential correctness test... \n");
     start_time = currentSeconds();
     test_seq_setup(dict, keys);
@@ -266,10 +267,10 @@ int main(int argc, char *argv[])
 
   delta_time = currentSeconds() - start_time;
   outmsg("    Complete! Took %f secs\n", delta_time);
-
+  hdict_free(dict);
 #endif
 
-  hdict_free(dict);
+  
   free(keys);
   free(values);
 
