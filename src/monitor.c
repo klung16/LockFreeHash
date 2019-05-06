@@ -13,14 +13,16 @@
 #include "util/util.h"
 
 #define DEFAULT_LOAD_FACTOR 10
-#define DEFAULT_NUM_TEST_VALUES 1000000
+#define DEFAULT_NUM_TEST_VALUES 10000000
 #define DEFAULT_DELETE_RATIO 0.1
 #define DEFAULT_INSERT_RATIO 0.1
 #define DEFAULT_NUM_THREADS 4
 
 #define DEFAULT_RAND_KEY_SEED 0
 #define DEFAULT_RAND_VAL_SEED 17
-#define RATIO 100
+#define DEFAULT_RAND_OP_SEED 2
+#define RATIO 10
+#define ITERATIONS 5
 
 static void usage() {
   char *use_string = "[-n NUM_OPS] [-l LOAD_FACTOR] [-d DELETE_RATIO] [-i INSERT_RATIO] [-t THD]";
@@ -36,7 +38,7 @@ static void usage() {
   exit(0);
 }
 
-hdict_t setup(int* keys, int* values, int num_ops, int load_factor) {
+hdict_t setup(int* keys, int* values, int num_ops, int load_factor, int* ops) {
   int i, num_buckets;
 
   // Sets up the keys
@@ -53,7 +55,12 @@ hdict_t setup(int* keys, int* values, int num_ops, int load_factor) {
 
   num_buckets = round(num_ops / load_factor);
 
-  printf("        The hash table is initilized with %d buckets.\n", num_buckets);
+  outmsg("          The hash table is initilized with %d buckets.\n", num_buckets);
+  
+  srand(DEFAULT_RAND_OP_SEED);
+  for (i = 0; i < num_ops; i++) {
+    ops[i] = rand() % 2;
+  }
 
   return hdict_new(num_buckets);
 }
@@ -76,6 +83,25 @@ void test_seq_delete(hdict_t dict, int* keys, int* values, int num_delete) {
   int i;
   for (i = 0; i < num_delete; i++) {
     hdict_delete(dict, keys[i]);
+  }
+}
+
+void test_seq_interleave(hdict_t dict, int* keys, int* values, int* ops, int num_write, int num_search) {
+  int i, op, j;
+
+  for (j = 0; j < RATIO; j++) {
+    for (i = 0; i < num_write; i++) {
+      op = ops[i];
+      if (op == 0) {
+        hdict_insert(dict, keys[i], values[i]);
+      } else if (op == 1) {
+        hdict_delete(dict, keys[i]);
+      } 
+    }
+  }
+  
+  for (i = 0; i < num_search; i++) {
+    hdict_lookup(dict, keys[i]);
   }
 }
 
@@ -109,6 +135,29 @@ void test_delete(hdict_t dict, int* keys, int* values, int num_delete) {
 #endif
 }
 
+void test_interleave(hdict_t dict, int* keys, int* values, int* ops, int num_write, int num_search) {
+#if OMP
+  int i, op, j;
+  #pragma omp parallel for
+  for (j = 0; j < RATIO; j++) {
+    for (i = 0; i < num_write; i++) {
+      op = ops[i];
+      if (op == 0) {
+        hdict_insert(dict, keys[i], values[i]);
+      } else if (op == 1) {
+        hdict_delete(dict, keys[i]);
+      } 
+    }
+  }
+
+  
+  #pragma omp parallel for
+  for (i = 0; i < num_search; i++) {
+    hdict_lookup(dict, keys[i]);
+  }
+#endif
+}
+
 int main(int argc, char *argv[]) {
   int c;
   int num_ops = DEFAULT_NUM_TEST_VALUES;
@@ -119,7 +168,7 @@ int main(int argc, char *argv[]) {
   double search_ratio, write_ratio;
   double start_time, delta_time;
   hdict_t dict;
-  int num_insert, num_search, num_delete;
+  int num_insert, num_search, num_delete, num_write;
 
   /* Grabs Arguments */
   char *optstring = "hn:l:d:i:t:";
@@ -181,40 +230,46 @@ int main(int argc, char *argv[]) {
 
   search_ratio = (1 - write_ratio);
 
-  printf("    Running the program with %d operations, load factor = %d, delete ratio = %.2f, insert ratio = %.2f, search ratio = %.2f\n",
-            num_ops, load_factor, delete_ratio, insert_ratio, search_ratio);
+  outmsg("    Running the program %d iterations with %d operations, load factor = %d, delete ratio = %.2f, insert ratio = %.2f, search ratio = %.2f\n",
+            ITERATIONS, num_ops, load_factor, delete_ratio, insert_ratio, search_ratio);
 
 #if OMP
-    printf("    Running with %d threads.  Max possible is %d.\n", num_threads, omp_get_max_threads());
+    outmsg("    Running with %d threads.  Max possible is %d.\n", num_threads, omp_get_max_threads());
     omp_set_num_threads(num_threads);
 #else
-    printf("    Running sequentially.\n");
+    outmsg("    Running sequentially.\n");
 #endif
 
   /* Set up */
-  printf("        The program is setting up the data...");
+  outmsg("        The program is setting up the data...");
   num_insert = round(num_ops * insert_ratio);
   num_search = round(num_ops * search_ratio);
   num_delete = round(num_ops * delete_ratio);
+  num_write = round((num_insert + num_delete)/RATIO);
   int *keys = malloc(sizeof(int) * num_ops);
   int *values = malloc(sizeof(int) * num_ops);
-  dict = setup(keys, values, num_ops, load_factor);
-  printf("        Set up complete!");
+  int *ops = malloc(sizeof(int) * num_ops);
+  dict = setup(keys, values, num_ops, load_factor, ops);
+  outmsg("        Set up complete!");
 
   start_time = currentSeconds();
+  
+  for (int its = 0; its < ITERATIONS; its++) {
+    #if OMP
+        test_insert(dict, keys, values, num_insert);
+        test_lookup(dict, keys, values, num_search);
+        test_delete(dict, keys, values, num_delete);
+        test_interleave(dict, keys, values, ops, num_write, num_search);
+    #else
+        test_seq_insert(dict, keys, values, num_insert);
+        test_seq_lookup(dict, keys, values, num_search);
+        test_seq_delete(dict, keys, values, num_delete);
+        test_seq_interleave(dict, keys, values, ops, num_write, num_search);
+    #endif
+  }
 
-#if OMP
-    test_insert(dict, keys, values, num_insert);
-    test_lookup(dict, keys, values, num_search);
-    test_delete(dict, keys, values, num_delete);
-#else
-    test_seq_insert(dict, keys, values, num_insert);
-    test_seq_lookup(dict, keys, values, num_search);
-    test_seq_delete(dict, keys, values, num_delete);
-#endif
-
-  delta_time = currentSeconds() - start_time;
-  printf("    Complete! Took %f secs\n", delta_time);
+  delta_time = (currentSeconds() - start_time)/ITERATIONS;
+  outmsg("    Complete! Took %f secs\n", delta_time);
 
   hdict_free(dict);
   free(keys);
