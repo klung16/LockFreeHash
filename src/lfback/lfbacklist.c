@@ -149,7 +149,6 @@ llist *llist_new() {
 void llist_insert(llist *L, int key, int val) {
   lnode *prev_node, *next_node;
   llist_search(key, L->head, &prev_node, &next_node);
-  // @TODO UPDATE VALUE
   if (prev_node->key == key) return;
   lnode *new_node = lnode_new(key, val);
 

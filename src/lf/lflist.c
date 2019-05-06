@@ -75,7 +75,6 @@ void llist_insert(llist *L, int key, int val) {
 
   do {
     right_node = llist_search(L, key, &left_node);
-    // @TODO update value when key same
     if ((right_node != L->tail) && (right_node->key == key)) return;
     new_node->next = right_node;
     if (__sync_bool_compare_and_swap(&(left_node->next), right_node, new_node)) return;
@@ -96,7 +95,6 @@ void llist_delete(llist *L, int key) {
 
   if (!__sync_bool_compare_and_swap(&(left_node->next), right_node, right_node_next)) {
     right_node = llist_search(L, right_node->key, &left_node);
-    // @TODO else free
   }
   return;
 }

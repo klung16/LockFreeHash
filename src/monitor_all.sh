@@ -1,4 +1,5 @@
 #!/bin/bash
+#PBS -q phi
 
 execdir=/home/klung/LockFreeHash/src/  # Directory containing your script
 seq_exe=seq-monitor
