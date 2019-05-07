@@ -473,3 +473,98 @@
     ----------------
     ----------------
     ----------------
+    Running the program 5 iterations with 10000 operations, load factor = 1, delete ratio = 0.25, insert ratio = 0.25, search ratio = 0.50
+        The program is setting up the data...
+        Set up complete!
+    Running sequentially.
+    Complete! Took 0.001180 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.001069 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.000995 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.000973 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.000937 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.000898 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.000857 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.000826 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 5 iterations with 10000 operations, load factor = 10, delete ratio = 0.25, insert ratio = 0.25, search ratio = 0.50
+        The program is setting up the data...
+        Set up complete!
+    Running sequentially.
+    Complete! Took 0.000914 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.000872 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.000868 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.000837 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.000830 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.000814 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.000793 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.000794 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 5 iterations with 10000 operations, load factor = 100, delete ratio = 0.25, insert ratio = 0.25, search ratio = 0.50
+        The program is setting up the data...
+        Set up complete!
+    Running sequentially.
+    Complete! Took 0.001610 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.001563 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.001521 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.001483 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.001432 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.001404 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.001380 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 0.001334 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------

@@ -1,0 +1,380 @@
+    Running the program 3 iterations with 10000000 operations, load factor = 1, delete ratio = 0.10, insert ratio = 0.10, search ratio = 0.80
+        The program is setting up the data...
+        Set up complete!
+    Running with 2 threads.  Max possible is 16.
+    Complete! Took 1.324451 secs
+    ----------------
+    Running with 4 threads.  Max possible is 2.
+    Complete! Took 0.738490 secs
+    ----------------
+    Running with 6 threads.  Max possible is 4.
+    Complete! Took 0.495126 secs
+    ----------------
+    Running with 8 threads.  Max possible is 6.
+    Complete! Took 0.409783 secs
+    ----------------
+    Running with 10 threads.  Max possible is 8.
+    Complete! Took 0.420757 secs
+    ----------------
+    Running with 12 threads.  Max possible is 10.
+    Complete! Took 0.361070 secs
+    ----------------
+    Running with 14 threads.  Max possible is 12.
+    Complete! Took 0.330964 secs
+    ----------------
+    Running with 16 threads.  Max possible is 14.
+    Complete! Took 0.283570 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 10, delete ratio = 0.10, insert ratio = 0.10, search ratio = 0.80
+        The program is setting up the data...
+        Set up complete!
+    Running with 2 threads.  Max possible is 16.
+    Complete! Took 1.790222 secs
+    ----------------
+    Running with 4 threads.  Max possible is 2.
+    Complete! Took 1.040849 secs
+    ----------------
+    Running with 6 threads.  Max possible is 4.
+    Complete! Took 0.773862 secs
+    ----------------
+    Running with 8 threads.  Max possible is 6.
+    Complete! Took 0.532495 secs
+    ----------------
+    Running with 10 threads.  Max possible is 8.
+    Complete! Took 0.536966 secs
+    ----------------
+    Running with 12 threads.  Max possible is 10.
+    Complete! Took 0.470793 secs
+    ----------------
+    Running with 14 threads.  Max possible is 12.
+    Complete! Took 0.412853 secs
+    ----------------
+    Running with 16 threads.  Max possible is 14.
+    Complete! Took 0.370408 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 100, delete ratio = 0.10, insert ratio = 0.10, search ratio = 0.80
+        The program is setting up the data...
+        Set up complete!
+    Running with 2 threads.  Max possible is 16.
+    Complete! Took 11.341674 secs
+    ----------------
+    Running with 4 threads.  Max possible is 2.
+    Complete! Took 6.049588 secs
+    ----------------
+    Running with 6 threads.  Max possible is 4.
+    Complete! Took 4.018450 secs
+    ----------------
+    Running with 8 threads.  Max possible is 6.
+    Complete! Took 3.080392 secs
+    ----------------
+    Running with 10 threads.  Max possible is 8.
+    Complete! Took 2.545679 secs
+    ----------------
+    Running with 12 threads.  Max possible is 10.
+    Complete! Took 2.122423 secs
+    ----------------
+    Running with 14 threads.  Max possible is 12.
+    Complete! Took 1.826716 secs
+    ----------------
+    Running with 16 threads.  Max possible is 14.
+    Complete! Took 1.652780 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 1, delete ratio = 0.25, insert ratio = 0.25, search ratio = 0.50
+        The program is setting up the data...
+        Set up complete!
+    Running with 2 threads.  Max possible is 16.
+    Complete! Took 1.787341 secs
+    ----------------
+    Running with 4 threads.  Max possible is 2.
+    Complete! Took 1.122251 secs
+    ----------------
+    Running with 6 threads.  Max possible is 4.
+    Complete! Took 0.741533 secs
+    ----------------
+    Running with 8 threads.  Max possible is 6.
+    Complete! Took 0.617991 secs
+    ----------------
+    Running with 10 threads.  Max possible is 8.
+    Complete! Took 0.545570 secs
+    ----------------
+    Running with 12 threads.  Max possible is 10.
+    Complete! Took 0.441647 secs
+    ----------------
+    Running with 14 threads.  Max possible is 12.
+    Complete! Took 0.401849 secs
+    ----------------
+    Running with 16 threads.  Max possible is 14.
+    Complete! Took 0.367451 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 10, delete ratio = 0.25, insert ratio = 0.25, search ratio = 0.50
+        The program is setting up the data...
+        Set up complete!
+    Running with 2 threads.  Max possible is 16.
+    Complete! Took 2.755624 secs
+    ----------------
+    Running with 4 threads.  Max possible is 2.
+    Complete! Took 1.578160 secs
+    ----------------
+    Running with 6 threads.  Max possible is 4.
+    Complete! Took 1.116839 secs
+    ----------------
+    Running with 8 threads.  Max possible is 6.
+    Complete! Took 0.899196 secs
+    ----------------
+    Running with 10 threads.  Max possible is 8.
+    Complete! Took 0.757200 secs
+    ----------------
+    Running with 12 threads.  Max possible is 10.
+    Complete! Took 0.662218 secs
+    ----------------
+    Running with 14 threads.  Max possible is 12.
+    Complete! Took 0.611515 secs
+    ----------------
+    Running with 16 threads.  Max possible is 14.
+    Complete! Took 0.575490 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 100, delete ratio = 0.25, insert ratio = 0.25, search ratio = 0.50
+        The program is setting up the data...
+        Set up complete!
+    Running with 2 threads.  Max possible is 16.
+    Complete! Took 15.138098 secs
+    ----------------
+    Running with 4 threads.  Max possible is 2.
+    Complete! Took 7.962599 secs
+    ----------------
+    Running with 6 threads.  Max possible is 4.
+    Complete! Took 5.449281 secs
+    ----------------
+    Running with 8 threads.  Max possible is 6.
+    Complete! Took 4.097260 secs
+    ----------------
+    Running with 10 threads.  Max possible is 8.
+    Complete! Took 3.401664 secs
+    ----------------
+    Running with 12 threads.  Max possible is 10.
+    Complete! Took 2.826711 secs
+    ----------------
+    Running with 14 threads.  Max possible is 12.
+    Complete! Took 2.500461 secs
+    ----------------
+    Running with 16 threads.  Max possible is 14.
+    Complete! Took 2.320983 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 1, delete ratio = 0.33, insert ratio = 0.33, search ratio = 0.34
+        The program is setting up the data...
+        Set up complete!
+    Running with 2 threads.  Max possible is 16.
+    Complete! Took 2.216522 secs
+    ----------------
+    Running with 4 threads.  Max possible is 2.
+    Complete! Took 1.208256 secs
+    ----------------
+    Running with 6 threads.  Max possible is 4.
+    Complete! Took 0.996887 secs
+    ----------------
+    Running with 8 threads.  Max possible is 6.
+    Complete! Took 0.687662 secs
+    ----------------
+    Running with 10 threads.  Max possible is 8.
+    Complete! Took 0.540961 secs
+    ----------------
+    Running with 12 threads.  Max possible is 10.
+    Complete! Took 0.460706 secs
+    ----------------
+    Running with 14 threads.  Max possible is 12.
+    Complete! Took 0.435791 secs
+    ----------------
+    Running with 16 threads.  Max possible is 14.
+    Complete! Took 0.402418 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 10, delete ratio = 0.33, insert ratio = 0.33, search ratio = 0.34
+        The program is setting up the data...
+        Set up complete!
+    Running with 2 threads.  Max possible is 16.
+    Complete! Took 3.083779 secs
+    ----------------
+    Running with 4 threads.  Max possible is 2.
+    Complete! Took 1.751440 secs
+    ----------------
+    Running with 6 threads.  Max possible is 4.
+    Complete! Took 1.210986 secs
+    ----------------
+    Running with 8 threads.  Max possible is 6.
+    Complete! Took 1.022246 secs
+    ----------------
+    Running with 10 threads.  Max possible is 8.
+    Complete! Took 0.796993 secs
+    ----------------
+    Running with 12 threads.  Max possible is 10.
+    Complete! Took 0.697499 secs
+    ----------------
+    Running with 14 threads.  Max possible is 12.
+    Complete! Took 0.631762 secs
+    ----------------
+    Running with 16 threads.  Max possible is 14.
+    Complete! Took 0.576329 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 100, delete ratio = 0.33, insert ratio = 0.33, search ratio = 0.34
+        The program is setting up the data...
+        Set up complete!
+    Running with 2 threads.  Max possible is 16.
+    Complete! Took 14.532461 secs
+    ----------------
+    Running with 4 threads.  Max possible is 2.
+    Complete! Took 7.736446 secs
+    ----------------
+    Running with 6 threads.  Max possible is 4.
+    Complete! Took 5.312510 secs
+    ----------------
+    Running with 8 threads.  Max possible is 6.
+    Complete! Took 3.950224 secs
+    ----------------
+    Running with 10 threads.  Max possible is 8.
+    Complete! Took 3.246256 secs
+    ----------------
+    Running with 12 threads.  Max possible is 10.
+    Complete! Took 2.774934 secs
+    ----------------
+    Running with 14 threads.  Max possible is 12.
+    Complete! Took 2.439887 secs
+    ----------------
+    Running with 16 threads.  Max possible is 14.
+    Complete! Took 2.179698 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 1, delete ratio = 0.49, insert ratio = 0.49, search ratio = 0.02
+        The program is setting up the data...
+        Set up complete!
+    Running with 2 threads.  Max possible is 16.
+    Complete! Took 2.891576 secs
+    ----------------
+    Running with 4 threads.  Max possible is 2.
+    Complete! Took 1.686554 secs
+    ----------------
+    Running with 6 threads.  Max possible is 4.
+    Complete! Took 1.148942 secs
+    ----------------
+    Running with 8 threads.  Max possible is 6.
+    Complete! Took 0.662026 secs
+    ----------------
+    Running with 10 threads.  Max possible is 8.
+    Complete! Took 0.592507 secs
+    ----------------
+    Running with 12 threads.  Max possible is 10.
+    Complete! Took 0.499734 secs
+    ----------------
+    Running with 14 threads.  Max possible is 12.
+    Complete! Took 0.476311 secs
+    ----------------
+    Running with 16 threads.  Max possible is 14.
+    Complete! Took 0.485843 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 10, delete ratio = 0.49, insert ratio = 0.49, search ratio = 0.02
+        The program is setting up the data...
+        Set up complete!
+    Running with 2 threads.  Max possible is 16.
+    Complete! Took 3.591972 secs
+    ----------------
+    Running with 4 threads.  Max possible is 2.
+    Complete! Took 1.917062 secs
+    ----------------
+    Running with 6 threads.  Max possible is 4.
+    Complete! Took 1.324460 secs
+    ----------------
+    Running with 8 threads.  Max possible is 6.
+    Complete! Took 1.122656 secs
+    ----------------
+    Running with 10 threads.  Max possible is 8.
+    Complete! Took 0.804727 secs
+    ----------------
+    Running with 12 threads.  Max possible is 10.
+    Complete! Took 0.667008 secs
+    ----------------
+    Running with 14 threads.  Max possible is 12.
+    Complete! Took 0.623370 secs
+    ----------------
+    Running with 16 threads.  Max possible is 14.
+    Complete! Took 0.584190 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 100, delete ratio = 0.49, insert ratio = 0.49, search ratio = 0.02
+        The program is setting up the data...
+        Set up complete!
+    Running with 2 threads.  Max possible is 16.
+    Complete! Took 12.622945 secs
+    ----------------
+    Running with 4 threads.  Max possible is 2.
+    Complete! Took 6.568696 secs
+    ----------------
+    Running with 6 threads.  Max possible is 4.
+    Complete! Took 4.521388 secs
+    ----------------
+    Running with 8 threads.  Max possible is 6.
+    Complete! Took 3.439416 secs
+    ----------------
+    Running with 10 threads.  Max possible is 8.
+    Complete! Took 2.764047 secs
+    ----------------
+    Running with 12 threads.  Max possible is 10.
+    Complete! Took 2.347656 secs
+    ----------------
+    Running with 14 threads.  Max possible is 12.
+    Complete! Took 2.071725 secs
+    ----------------
+    Running with 16 threads.  Max possible is 14.
+    Complete! Took 1.926283 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------

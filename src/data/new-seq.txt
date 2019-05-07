@@ -1,0 +1,380 @@
+    Running the program 3 iterations with 10000000 operations, load factor = 1, delete ratio = 0.10, insert ratio = 0.10, search ratio = 0.80
+        The program is setting up the data...
+        Set up complete!
+    Running sequentially.
+    Complete! Took 1.537015 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 1.446232 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 1.446864 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 1.446206 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 1.437356 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 1.444562 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 1.442590 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 1.445290 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 10, delete ratio = 0.10, insert ratio = 0.10, search ratio = 0.80
+        The program is setting up the data...
+        Set up complete!
+    Running sequentially.
+    Complete! Took 3.871929 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 3.827671 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 3.825816 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 3.834807 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 3.870270 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 3.892207 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 3.828590 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 3.888261 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 100, delete ratio = 0.10, insert ratio = 0.10, search ratio = 0.80
+        The program is setting up the data...
+        Set up complete!
+    Running sequentially.
+    Complete! Took 36.730738 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 36.498869 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 36.599724 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 36.594770 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 36.728571 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 36.644072 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 36.042079 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 36.594640 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 1, delete ratio = 0.25, insert ratio = 0.25, search ratio = 0.50
+        The program is setting up the data...
+        Set up complete!
+    Running sequentially.
+    Complete! Took 2.125164 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.065982 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.065769 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.068158 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.066471 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.069694 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.069552 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.065500 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 10, delete ratio = 0.25, insert ratio = 0.25, search ratio = 0.50
+        The program is setting up the data...
+        Set up complete!
+    Running sequentially.
+    Complete! Took 4.793690 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 4.813256 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 4.805415 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 4.832966 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 4.817290 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 4.823783 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 4.803939 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 4.812276 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 100, delete ratio = 0.25, insert ratio = 0.25, search ratio = 0.50
+        The program is setting up the data...
+        Set up complete!
+    Running sequentially.
+    Complete! Took 41.162269 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 40.167127 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 41.263804 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 41.227178 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 41.215939 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 41.195001 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 41.232223 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 41.159654 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 1, delete ratio = 0.33, insert ratio = 0.33, search ratio = 0.34
+        The program is setting up the data...
+        Set up complete!
+    Running sequentially.
+    Complete! Took 2.329127 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.287478 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.298388 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.290576 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.289116 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.287311 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.288129 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.290779 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 10, delete ratio = 0.33, insert ratio = 0.33, search ratio = 0.34
+        The program is setting up the data...
+        Set up complete!
+    Running sequentially.
+    Complete! Took 4.844608 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 4.838731 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 4.845989 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 4.843970 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 4.849993 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 4.844910 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 4.963871 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 4.849236 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 100, delete ratio = 0.33, insert ratio = 0.33, search ratio = 0.34
+        The program is setting up the data...
+        Set up complete!
+    Running sequentially.
+    Complete! Took 34.897412 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 34.919153 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 34.925873 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 34.922613 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 35.067813 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 34.999782 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 35.014341 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 34.974398 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 1, delete ratio = 0.49, insert ratio = 0.49, search ratio = 0.02
+        The program is setting up the data...
+        Set up complete!
+    Running sequentially.
+    Complete! Took 2.748673 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 3.475021 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.748957 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 3.445503 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.747442 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 3.139163 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 2.748176 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 3.388380 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 10, delete ratio = 0.49, insert ratio = 0.49, search ratio = 0.02
+        The program is setting up the data...
+        Set up complete!
+    Running sequentially.
+    Complete! Took 6.118441 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 6.109859 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 6.115372 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 6.123854 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 6.135307 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 6.128298 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 6.133212 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 6.119432 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    Running the program 3 iterations with 10000000 operations, load factor = 100, delete ratio = 0.49, insert ratio = 0.49, search ratio = 0.02
+        The program is setting up the data...
+        Set up complete!
+    Running sequentially.
+    Complete! Took 39.855043 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 39.914073 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 39.914253 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 39.897493 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 39.863669 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 39.862640 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 39.819618 secs
+    ----------------
+    Running sequentially.
+    Complete! Took 39.843710 secs
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
+    ----------------
